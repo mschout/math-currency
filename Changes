@@ -21,3 +21,5 @@ Revision history for Perl extension Math::Currency.
 	- kick self repeatedly for being stupid
 0.10  7/28/2000 4:18PM
 	- Change everything, now inherits everything from Math::FixedPrecision
+0.11  2/21/2001 2:38PM
+	- Rewrite README to emphasis need for M::FP/M::BF/M::BI updates

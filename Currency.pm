@@ -19,7 +19,7 @@ package Math::Currency;
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $PACKAGE $CLASSDATA);
 use Exporter;
-use Math::FixedPrecision(0.10);
+use Math::FixedPrecision(0.11);
 use overload	'""'	=>	\&stringify;
 use POSIX qw(locale_h);
 
@@ -34,7 +34,7 @@ use POSIX qw(locale_h);
 	Money
 );
 
-$VERSION = '0.10';
+$VERSION = '0.11';
 
 $PACKAGE = 'Math::Currency';
 
@@ -381,7 +381,7 @@ instead of Math::Currency->new().
 
 =head1 AUTHOR
 
-John Peacock <JPeacock@UnivPress.com>
+John Peacock <jpeacock@rowman.com>
 
 =head1 SEE ALSO
 

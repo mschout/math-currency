@@ -8,6 +8,11 @@ other countries to know if what I have done is suffient.  You are urged to use
 explicit format values for your country, rather than relying on the built-in
 system without further testing.
 
+NOTE:  You must install Math::FixedPrecision before installing this module,
+which in turn requires that the core Math::BigInt and Math::BigFloat be replaced
+with corrected versions.  Please see the README in Math::FixedPrecision for
+more details.
+
 To install, do the usual:
 
         perl Makefile.PL
@@ -15,7 +20,7 @@ To install, do the usual:
         make test
         make install
 
-Please see the POD for usage instructions...
+
 
 John Peacock
-jpeacock@univpress.com
+jpeacock@rowman.com
