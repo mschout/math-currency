@@ -4,7 +4,7 @@ use ExtUtils::MakeMaker;
 WriteMakefile(
     'NAME'	=> 'Math::Currency',
     'VERSION_FROM' => 'Currency.pm', # finds $VERSION
-    'PREREQ_PM' => { Math::FixedPrecision => 0.10,
-					 Math::BigFloat => 0.01,
-				   },
+    'PREREQ_PM' => {	Math::BigFloat	=> 1.27,
+			Math::BigInt	=> 1.39,
+			},
 );

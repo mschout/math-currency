@@ -23,3 +23,6 @@ Revision history for Perl extension Math::Currency.
 	- Change everything, now inherits everything from Math::FixedPrecision
 0.11  2/21/2001 2:38PM
 	- Rewrite README to emphasis need for M::FP/M::BF/M::BI updates
+0.20  1/29/2002 2:27PM
+	- Rewrite to use Math::BigFloat >= 1.27
+	- Change version to next major level

@@ -1,17 +1,11 @@
 Math::Currency - Exact Currency Math with Formatting and Rounding
 
-This is a major rewrite to enable the use of Math::FixedPrecision for all math
-functions instead of internal functions.  It has also been configured to try 
-to use Locale formatting if it can, or US defaults if it cannot.  The format
-settings can be considered at best experimental.  I need a lot more data from
-other countries to know if what I have done is suffient.  You are urged to use
-explicit format values for your country, rather than relying on the built-in
-system without further testing.
-
-NOTE:  You must install Math::FixedPrecision before installing this module,
-which in turn requires that the core Math::BigInt and Math::BigFloat be replaced
-with corrected versions.  Please see the README in Math::FixedPrecision for
-more details.
+This is a rewrite to enable the use of the new Math::BigFloat for all math
+operations.  It has also been configured to try to use Locale formatting if it
+can, or US defaults if it cannot.  The format settings can be considered at best
+experimental.  I need a lot more data from other countries to know if what I have
+done is suffient.  You are urged to use explicit format values for your country,
+rather than relying on the built-in system without further testing.
 
 To install, do the usual:
 
@@ -20,7 +14,14 @@ To install, do the usual:
         make test
         make install
 
+NOTE:  You must install Math::BigFloat 1.27 before installing this module,
+which is not currently part of the Perl core (it will be included with 5.6.2).
+You can get Math::BigFloat as part of the Math::BigInt 1.49 distribution found
+here:
 
+	http://www.cpan.org/modules/by-module/Math/Math-BigInt-1.49.tar.gz
+
+or from your local CPAN site.
 
 John Peacock
 jpeacock@rowman.com

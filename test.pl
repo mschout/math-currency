@@ -7,11 +7,10 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..8\n"; }
-END {print "not ok 1\n" unless $loaded;}
+use Test::More tests => 18;
+
 use Math::Currency(Money);
-$loaded = 1;
-print "ok 1\n";
+use_ok( Math::Currency );
 
 ######################### End of black magic.
 
@@ -19,76 +18,68 @@ print "ok 1\n";
 # (correspondingly "not ok 13") depending on the success of chunk 13
 # of the test code):
 
-$dollars = Math::Currency->new('$18123') or print "not";
-print "ok 2\n";
+ok ( $dollars = Math::Currency->new('$18123'), "class new" );
+ok ( $dollars = $dollars->new('$18123'), "object new" );
+ok ( $newdollars = Money(0.10), "new via exported Money()");
 
-$dollars *= 66.33 or print "not ";
-$dollars /= 100;
-print "ok 3\n";
+is ( $dollars *= 66.33, '$1,202,098.59', "multiply");
+is ( $dollars /= 100, '$12,020.99', "divide");
 
-if ( $dollars < 3500 )
-{
-	print "not";
-}
-print "ok 4\n";
+ok ( $dollars > 3500, "greater than (numeric)" );
+ok ( $dollars < 13500, "less than (numeric)" );
+ok ( $dollars == 12020.99, "equal to (numeric)" );
+ok ( $dollars eq '$12,020.99', "equal to (string)" );
 
-unless ( $dollars eq '$12,020.99' )
-{
-	print "not";
-}
-print "ok 5\n";
+$dollars = Math::Currency->new(-42);
+is ( $dollars,'($42)', "display of negative currency" );
 
 $dollars = Math::Currency->new(56);
 
-unless ( $dollars * 0.555 == 31.08 )
-{
-	print "not";
-}
-print "ok 6\n";
+ok ( $dollars * 0.555 == 31.08, "multiply followed by auto-round" );
 
 $dollars = Math::Currency->new(20.01);
 
-unless ( $dollars * 1.0 == 20.01 )
-{
-	print "not";
-}
-print "ok 7\n";
+ok ( $dollars * 1.0 == 20.01, "identity multiply");
 
-unless ( $dollars * -1.0 == -20.01 )
-{
-	print "not";
-}
-print "ok 8\n";
+$newdollars = $dollars * -1.0;
 
-print "\nFormatting tests:\n";
+ok (  $newdollars == -20.01, "negative identity multiply" );
 
-$newdollars = Money(0.10);
-print "$newdollars\n";
+$deutchmarks = Math::Currency->new( -29.95,
+	{
+		PREFIX		=>	'',
+		SEPARATOR	=>	' ',
+		DECIMAL		=>	',',
+		POSTFIX		=>	'DM',
+		FRAC_DIGITS	=>	3,
+		GROUPING	=>	3,
+	}
+);
+ok ( $deutchmarks eq '(29,950DM)', "foreign currency" );
+$newdm = $deutchmarks->new(-29.95);
+ok ( $deutchmarks == $newdm, "two object equality (numeric)" );
+ok ( $deutchmarks eq $newdm, "two object equality (string)" );
 
-$newdollars += 12.95;
-print "$newdollars\n";
-
-$pounds = Math::Currency->new( -29.95, 
+$pounds = Math::Currency->new( 98994.95,
 	{
 		PREFIX		=>	'',
 		SEPARATOR	=>	',',
 		DECIMAL		=>	'.',
-		POSTFIX		=>	'œ',
+		POSTFIX		=>	'£',
 		FRAC_DIGITS	=>	2,
 		GROUPING	=>	3,
 	}
 );
 
-print "Now in Pounds Sterling: $pounds\n";
-print "$newdollars\n";
+$newpounds = $pounds + 100000;
 
-$newpounds = $pounds->new(39.95);
-print "$newpounds\n";
+is ( ref($newpounds), ref($pounds), "autoupgrade to object" );
 
-$newpounds = $newpounds + 100000;
-print "$newpounds\n";
+print "\n# Formatting examples:\n";
+print "# In Pounds Sterling:	$pounds\n";
+print "# In negative Dollars:	$newdollars\n";
 
-$deutchmarks = Math::Currency->new( -29.95, 
+$deutchmarks = Math::Currency->new( 23459.95,
 	{
 		PREFIX		=>	'',
 		SEPARATOR	=>	' ',
@@ -99,4 +90,4 @@ $deutchmarks = Math::Currency->new( -29.95,
 	}
 );
 
-print $deutchmarks;
+print "# In Deutchmarks: 	$deutchmarks\n";
