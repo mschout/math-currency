@@ -3,4 +3,4 @@ Currency.pm
 MANIFEST
 Makefile.PL
 README
-test.pl
+t/test.t

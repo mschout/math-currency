@@ -7,11 +7,20 @@ experimental.  I need a lot more data from other countries to know if what I hav
 done is suffient.  You are urged to use explicit format values for your country,
 rather than relying on the built-in system without further testing.
 
-To install, do the usual:
+To install, do the usual (as non-root):
 
         perl Makefile.PL
         make
         make test
+
+You can alternately run
+
+	make test TEST_VERBOSE=1
+
+to see the actual tests being run, as well as some example outputs.
+
+Then to install the module (as root):
+
         make install
 
 NOTE:  You must install Math::BigFloat 1.27 before installing this module,
@@ -25,3 +34,5 @@ or from your local CPAN site.
 
 John Peacock
 jpeacock@rowman.com
+
+$Revision: 2.1 $

@@ -7,16 +7,31 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-use Test::More tests => 18;
+use Test::More tests => 25;
 
 use Math::Currency(Money);
 use_ok( Math::Currency );
 
-######################### End of black magic.
+# check that the minimal format defaults got set up
 
-# Insert your test code below (better if it prints "ok 13"
-# (correspondingly "not ok 13") depending on the success of chunk 13
-# of the test code):
+ok ( $Math::Currency::CLASSDATA, "format defaults configured" );
+
+foreach $param qw( PREFIX POSTFIX SEPARATOR DECIMAL FRAC_DIGITS GROUPING )
+{
+	ok ( defined $Math::Currency::CLASSDATA->{$param}, "$param parameter exists: ".$Math::Currency::CLASSDATA->{$param} )
+}
+
+# For subsequent testing, we need to make sure that format is default US
+Math::Currency->format(
+	{
+		PREFIX 		=>	'$',
+		POSTFIX		=>	'',
+		SEPARATOR	=>	',',
+		DECIMAL		=>	'.',
+		FRAC_DIGITS 	=>	'2',
+		GROUPING	=>	'3',
+	}
+);
 
 ok ( $dollars = Math::Currency->new('$18123'), "class new" );
 ok ( $dollars = $dollars->new('$18123'), "object new" );

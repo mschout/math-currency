@@ -26,3 +26,5 @@ Revision history for Perl extension Math::Currency.
 0.20  1/29/2002 2:27PM
 	- Rewrite to use Math::BigFloat >= 1.27
 	- Change version to next major level
+0.21  1/30/2002 10:56AM
+	- Adjust tests to correctly handle non-US locale
