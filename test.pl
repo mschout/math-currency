@@ -6,7 +6,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..5\n"; }
+BEGIN { $| = 1; print "1..6\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Math::Currency(Money);
 $loaded = 1;
@@ -36,6 +36,14 @@ unless ( $dollars eq "$12,020.99" )
 	print "not";
 }
 print "ok 5\n";
+
+$dollars = Math::Currency->new(56);
+
+unless ( $dollars * 0.555 == 31.08 )
+{
+	print "not";
+}
+print "ok 6\n";
 
 print "\nFormatting tests:\n";
 

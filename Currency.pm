@@ -17,6 +17,7 @@ eval 'exec /usr2/local/bin/perl -S $0 ${1+"$@"}'
 package Math::Currency;
 
 use strict;
+use Carp;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $PACKAGE $CLASSDATA);
 require Exporter;
 require Math::FixedPrecision;
@@ -44,7 +45,7 @@ use POSIX qw(locale_h);
 	Money
 );
 
-$VERSION = '0.08';
+$VERSION = '0.09';
 
 $PACKAGE = 'Math::Currency';
 
@@ -173,12 +174,13 @@ sub multiply		#05/10/99 5:12:PM
 {
 	my($oper1,$oper2,$inverted) = @_;
 
-	unless ( ref $oper2 )
+	if ( ref $oper2 )
 	{
-		$oper2 = $PACKAGE->new( $oper2 );
+	 	carp "Do you really mean to multiply currency values?";
+		$oper2 = $oper2->{VAL};
 	}
 
-	return $PACKAGE->new( $oper1->{VAL} * $oper2->{VAL},$oper1->format );
+	return $PACKAGE->new( $oper1->{VAL} * $oper2,$oper1->format );
 	
 }	##multiply
 
@@ -189,13 +191,14 @@ sub divide		#05/10/99 5:12:PM
 {
 	my($oper1,$oper2,$inverted) = @_;
 
-	unless ( ref $oper2 )
+	if ( ref $oper2 )
 	{
-		$oper2 = $PACKAGE->new($oper2);
+		carp "Do you really mean to divide currency values?";
+		$oper2 = $oper2->{VAL};
 	}
 
-	return ( $PACKAGE->new( $oper1->{VAL} / $oper2->{VAL},$oper1->format ) ) unless $inverted;
-	return ( $PACKAGE->new( $oper2->{VAL} / $oper1->{VAL},$oper2->format ) )
+	return ( $PACKAGE->new( $oper1->{VAL} / $oper2,$oper1->format ) ) unless $inverted;
+	return ( $PACKAGE->new( $oper2 / $oper1->{VAL},$oper2->format ) )
 	
 }	##divide
 

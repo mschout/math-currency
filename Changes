@@ -16,3 +16,6 @@ Revision history for Perl extension Math::Currency.
 0.08  Tue Jun 27 11:32:06 2000
 	- Copy format from existing instance
 	- Implement cmp (I thought spaceship was enough)
+0.09  Tue Jun 27 14:45:09 2000
+	- Change multiply and divide to not promote term to currency type
+	- kick self repeatedly for being stupid
