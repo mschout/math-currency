@@ -45,3 +45,6 @@ Revision history for Perl extension Math::Currency.
 	- Increment version for release to CPAN
 0.31  2/12/2002 11:45AM
 	- Select sensible defaults for missing locale parameters
+0.32  3/06/2002 3:09PM
+	- Forgot to enforce precision on objects with only global format
+	- Need to have ->new() called from M::BI::objectify use M::BF::new instead

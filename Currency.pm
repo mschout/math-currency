@@ -37,7 +37,7 @@ use POSIX qw(locale_h);
 	Money
 );
 
-$VERSION = (qw$Revision: 3.1 $)[1]/10;
+$VERSION = (qw$Revision: 3.2 $)[1]/10;
 
 $PACKAGE = 'Math::Currency';
 
@@ -137,6 +137,12 @@ sub new		#05/10/99 3:13:PM
 	my $parent = $proto if ref($proto);
 
 	my $value = shift;
+
+	if ( (caller)[0] =~ /Math\::BigInt/ ) # only when called from objectify()
+	{
+		return Math::BigFloat->new($value);
+	}
+
 	$value =~ tr/()-0-9.//cd;	#strip any formatting characters
 	$value = "-$value" if $value=~s/(^\()|(\)$)//g;	# handle parens
 	my $self;
@@ -157,7 +163,8 @@ sub new		#05/10/99 3:13:PM
 	}
 	else
 	{
-		$self = Math::BigFloat->new($value);
+		$self = Math::BigFloat->new($value, undef,
+			-$FORMAT->{FRAC_DIGITS});
 		bless $self, $class;
 	}
 	return $self;
@@ -383,7 +390,7 @@ like this:
 
 =head2 Format Parameters
 
-The format has must contains all of the commonly configured LC_MONETARY
+The format must contains all of the commonly configured LC_MONETARY
 Locale settings.  For example, these are the values of the default US format
 (with comments):
 
