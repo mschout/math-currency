@@ -1,27 +1,21 @@
-Math::Currency - Perl extension for performing exact currency math
+Math::Currency - Exact Currency Math with Formatting and Rounding
 
-This module has been in use internally for the last 3 months or so.
-I was driven to write it because I needed to match the outstanding
-Accounts Receivable balance to the penny when converting from one
-warehouse distribution system to another.  If you have to work with
-currency values, this module will probably save to a lot of heart-
-burn trying to match things exactly (which the accountants are so
-picky about ;).
+This is a major rewrite to enable the use of Math::FixedPrecision for all math
+functions instead of internal functions.  It has also been configured to try 
+to use Locale formatting if it can, or US defaults if it cannot.  The format
+setttings can be considered at best experimental.  I need a lot more data from
+other countries to know if what I have done is suffient.  You are urged to use
+explicit format values for your country, rather than relying on the built-in
+system without further testing.
 
-The included documentation is sparse but probably adequate.  Do the
-usual:
+To install, do the usual:
 
-	perl Makefile.PL
-	make
-	make test
-	make install
+        perl Makefile.PL
+        make
+        make test
+        make install
 
-Based on feedback from other users, I will change or not change
-the interface.  I would like to have a set of international formats
-preprogrammed so that anyone can use it with little work.  You can
-still do whatever you like now, it is just not as clever/pretty as
-I would like.
+Please see the POD for usage instructions...
 
 John Peacock
-JPeacock@UnivPress.com
-10/4/99
+jpeacock@univpress.com

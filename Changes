@@ -5,6 +5,10 @@ Revision history for Perl extension Math::Currency.
 	- not publicly released
 0.02  Thu May 27 16:21:00 1999
 	- implement translucent print format
-0.03  Mon Oct 4  21:20:00 1999
-	- finally deal with negative numbers and < 1.00 properly
-	- first CPAN release
+0.03  Internal only release
+0.04  Tue Feb 29 12:04:00 2000
+	- make overridden format sticky
+0.05  Internal only release
+0.06  Mon Apr 24 03:45:00 2000
+	- Major Overhaul
+	- Inherit from Math::FixedPrecision

@@ -31,6 +31,8 @@ if ( $dollars < 3500 )
 }
 print "ok 4\n";
 
+print "\nFormatting tests:\n";
+
 $newdollars = Money(0.10);
 print "$newdollars\n";
 
@@ -50,6 +52,7 @@ print "Now in Pounds Sterling: $pounds\n";
 print "$newdollars\n";
 
 $newpounds = $pounds->new(39.95);
+print "$newpounds\n";
+
+$newpounds = $newpounds + 10;
 print "$newpounds";
-
-
