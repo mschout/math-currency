@@ -37,13 +37,13 @@ use POSIX qw(locale_h);
 	Money
 );
 
-$VERSION = (qw$Revision: 3.0 $)[1]/10;
+$VERSION = (qw$Revision: 3.1 $)[1]/10;
 
 $PACKAGE = 'Math::Currency';
 
 $LC_MONETARY = {
 	USD => {
-		INT_CURR_SYMBOL		=> 'USD',
+		INT_CURR_SYMBOL		=> 'USD ',
 		CURRENCY_SYMBOL		=> '$',
 		MON_DECIMAL_POINT	=> '.',
 		MON_THOUSANDS_SEP	=> ',',
@@ -96,24 +96,24 @@ $LC_MONETARY = {
 };
 
 $FORMAT = {
-	INT_CURR_SYMBOL		=> ${localeconv()}{'int_curr_symbol'},
-	CURRENCY_SYMBOL		=> ${localeconv()}{'currency_symbol'},
-	MON_DECIMAL_POINT	=> ${localeconv()}{'mon_decimal_point'},
-	MON_THOUSANDS_SEP	=> ${localeconv()}{'mon_thousands_sep'},
-	MON_GROUPING		=> ${localeconv()}{'mon_grouping'},
-	POSITIVE_SIGN		=> ${localeconv()}{'positive_sign'},
-	NEGATIVE_SIGN		=> ${localeconv()}{'negative_sign'},
-	INT_FRAC_DIGITS		=> ${localeconv()}{'int_frac_digits'},
-	FRAC_DIGITS		=> ${localeconv()}{'frac_digits'},
-	P_CS_PRECEDES		=> ${localeconv()}{'p_cs_precedes'},
-	P_SEP_BY_SPACE		=> ${localeconv()}{'p_sep_by_space'},
-	N_CS_PRECEDES		=> ${localeconv()}{'n_cs_precedes'},
-	N_SEP_BY_SPACE		=> ${localeconv()}{'n_sep_by_space'},
-	P_SIGN_POSN		=> ${localeconv()}{'p_sign_posn'},
-	N_SIGN_POSN		=> ${localeconv()}{'n_sign_posn'},
+	INT_CURR_SYMBOL		=> ${localeconv()}{'int_curr_symbol'} 	|| '',
+	CURRENCY_SYMBOL		=> ${localeconv()}{'currency_symbol'} 	|| '',
+	MON_DECIMAL_POINT	=> ${localeconv()}{'mon_decimal_point'}	|| '',
+	MON_THOUSANDS_SEP	=> ${localeconv()}{'mon_thousands_sep'}	|| '',
+	MON_GROUPING		=> ${localeconv()}{'mon_grouping'} 	||  0,
+	POSITIVE_SIGN		=> ${localeconv()}{'positive_sign'} 	|| '',
+	NEGATIVE_SIGN		=> ${localeconv()}{'negative_sign'} 	|| '-',
+	INT_FRAC_DIGITS		=> ${localeconv()}{'int_frac_digits'} 	||  0,
+	FRAC_DIGITS		=> ${localeconv()}{'frac_digits'} 	||  0,
+	P_CS_PRECEDES		=> ${localeconv()}{'p_cs_precedes'}  	||  0,
+	P_SEP_BY_SPACE		=> ${localeconv()}{'p_sep_by_space'}  	||  0,
+	N_CS_PRECEDES		=> ${localeconv()}{'n_cs_precedes'}  	||  0,
+	N_SEP_BY_SPACE		=> ${localeconv()}{'n_sep_by_space'}  	||  0,
+	P_SIGN_POSN		=> ${localeconv()}{'p_sign_posn'}  	||  1,
+	N_SIGN_POSN		=> ${localeconv()}{'n_sign_posn'}  	||  0,
 };
 
-unless ( defined $FORMAT->{INT_CURR_SYMBOL} ) # no active locale
+unless ( $FORMAT->{CURRENCY_SYMBOL} ) # no active locale
 {
 	$FORMAT = $LC_MONETARY->{USD};
 }
@@ -121,7 +121,7 @@ unless ( defined $FORMAT->{INT_CURR_SYMBOL} ) # no active locale
 # Set class constants
 $round_mode = 'even';  # Banker's rounding obviously
 $accuracy   = undef;
-$precision  = -$FORMAT->{FRAC_DIGITS};
+$precision  = $FORMAT->{FRAC_DIGITS} > 0 ? -$FORMAT->{FRAC_DIGITS} : 0;
 $div_scale  = 40;
 $use_int    = 0;
 
@@ -183,9 +183,11 @@ sub bstr		#05/10/99 3:52:PM
 	my $dp = index($value, ".");
 	my $myformat = $self->format();
 	my $sign = $neg		? $myformat->{NEGATIVE_SIGN}
-				: $myformat->{POSITIVE_SIGN} || '';
+				: $myformat->{POSITIVE_SIGN};
 	my $curr = $use_int 	? $myformat->{INT_CURR_SYMBOL}
 				: $myformat->{CURRENCY_SYMBOL};
+	my $digits = $use_int 	? $myformat->{INT_FRAC_DIGITS}
+				: $myformat->{FRAC_DIGITS};
 	my $formtab =
 	[
 	    [
@@ -206,11 +208,11 @@ sub bstr		#05/10/99 3:52:PM
 
 	if ( $dp < 0 )
 	{
-		$value .= '.' . '0' x $myformat->{FRAC_DIGITS};
+		$value .= '.' . '0' x $digits;
 	}
-	elsif ( (length($value) - $dp - 1) < $myformat->{FRAC_DIGITS} )
+	elsif ( (length($value) - $dp - 1) < $digits )
 	{
-		$value .= '0' x ( $myformat->{FRAC_DIGITS} - $dp )
+		$value .= '0' x ( $digits - $dp )
 	}
 
 	($value = reverse "$value") =~ s/\+//;

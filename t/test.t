@@ -22,7 +22,7 @@ foreach $param qw( INT_CURR_SYMBOL CURRENCY_SYMBOL MON_DECIMAL_POINT
 		   N_SEP_BY_SPACE P_SIGN_POSN N_SIGN_POSN
 		 ) # hardcoded keys to be sure they are all there
 {
-	ok ( defined Math::Currency->format($param), " \t$param  =>  ".Math::Currency->format($param) );
+	ok ( defined Math::Currency->format($param), sprintf(" \t%-20s = '%s'",$param,Math::Currency->format($param)) );
 }
 
 # For subsequent testing, we need to make sure that format is default US
@@ -62,10 +62,10 @@ $newdollars = $dollars * -1.0;
 
 ok (  $newdollars == -20.01, "negative identity multiply" );
 
-ok ( $dollars->format('INT_CURR_SYMBOL') eq 'USD', "default format returned" );
-ok ( $dollars->format('CURRENCY_SYMBOL',"WOW"), "set a custom format");
-ok ( $dollars->format('INT_CURR_SYMBOL') eq 'USD', "default format copied" );
-ok ( $dollars eq 'WOW20.01', "custom format maintained" );
+ok ( $dollars->format('INT_CURR_SYMBOL') eq 'USD ', "default format returned" );
+ok ( $dollars->format('CURRENCY_SYMBOL',"WOW "), "set a custom format");
+ok ( $dollars->format('INT_CURR_SYMBOL') eq 'USD ', "default format copied" );
+ok ( $dollars eq 'WOW 20.01', "custom format maintained" );
 $dollars->format(''); # defined but false
 ok ( $dollars eq '$20.01', "default format restored" );
 

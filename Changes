@@ -22,7 +22,7 @@ Revision history for Perl extension Math::Currency.
 0.10  7/28/2000 4:18PM
 	- Change everything, now inherits everything from Math::FixedPrecision
 0.11  2/21/2001 2:38PM
-	- Rewrite README to emphasis need for M::FP/M::BF/M::BI updates
+	- Rewrite README to emphasize need for M::FP/M::BF/M::BI updates
 0.20  1/29/2002 2:27PM
 	- Rewrite to use Math::BigFloat >= 1.27
 	- Change version to next major level
@@ -43,3 +43,5 @@ Revision history for Perl extension Math::Currency.
 0.30  2/11/2002 11:45AM
 	- Completed rewrite of docs
 	- Increment version for release to CPAN
+0.31  2/12/2002 11:45AM
+	- Select sensible defaults for missing locale parameters

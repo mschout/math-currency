@@ -5,6 +5,6 @@ WriteMakefile(
     'NAME'	=> 'Math::Currency',
     'VERSION_FROM' => 'Currency.pm', # finds $VERSION
     'PREREQ_PM' => {	Math::BigFloat	=> 1.27,
-			Math::BigInt	=> 1.39,
+			Test::More	=> 0.02,
 			},
 );
