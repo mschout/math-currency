@@ -7,31 +7,26 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-use Test::More tests => 25;
-
-use Math::Currency(Money);
+use Test::More tests => 43;
+use Math::Currency qw(Money $LC_MONETARY $FORMAT);
 use_ok( Math::Currency );
 
 # check that the minimal format defaults got set up
 
-ok ( $Math::Currency::CLASSDATA, "format defaults configured" );
+ok ( defined $Math::Currency::FORMAT, "format defaults configured" );
 
-foreach $param qw( PREFIX POSTFIX SEPARATOR DECIMAL FRAC_DIGITS GROUPING )
+foreach $param qw( INT_CURR_SYMBOL CURRENCY_SYMBOL MON_DECIMAL_POINT
+		   MON_THOUSANDS_SEP MON_GROUPING POSITIVE_SIGN
+		   NEGATIVE_SIGN INT_FRAC_DIGITS FRAC_DIGITS
+		   P_CS_PRECEDES P_SEP_BY_SPACE N_CS_PRECEDES
+		   N_SEP_BY_SPACE P_SIGN_POSN N_SIGN_POSN
+		 ) # hardcoded keys to be sure they are all there
 {
-	ok ( defined $Math::Currency::CLASSDATA->{$param}, "$param parameter exists: ".$Math::Currency::CLASSDATA->{$param} )
+	ok ( defined Math::Currency->format($param), " \t$param  =>  ".Math::Currency->format($param) );
 }
 
 # For subsequent testing, we need to make sure that format is default US
-Math::Currency->format(
-	{
-		PREFIX 		=>	'$',
-		POSTFIX		=>	'',
-		SEPARATOR	=>	',',
-		DECIMAL		=>	'.',
-		FRAC_DIGITS 	=>	'2',
-		GROUPING	=>	'3',
-	}
-);
+Math::Currency->format($LC_MONETARY->{USD});
 
 ok ( $dollars = Math::Currency->new('$18123'), "class new" );
 ok ( $dollars = $dollars->new('$18123'), "object new" );
@@ -46,7 +41,14 @@ ok ( $dollars == 12020.99, "equal to (numeric)" );
 ok ( $dollars eq '$12,020.99', "equal to (string)" );
 
 $dollars = Math::Currency->new(-42);
-is ( $dollars,'($42)', "display of negative currency" );
+is ( $dollars,'-$42.00', "display of negative currency" );
+
+$dollars = Math::Currency->new('($42)');	# thanks pjones@pmade.org
+is ( $dollars,'-$42.00', "new negative currency" );
+
+$dollars = Math::Currency->new('$4');		# thanks pjones@pmade.org
+is ( $dollars,'$4.00', "auto decimal places to FRAC_DIGITS" );
+
 
 $dollars = Math::Currency->new(56);
 
@@ -60,49 +62,33 @@ $newdollars = $dollars * -1.0;
 
 ok (  $newdollars == -20.01, "negative identity multiply" );
 
-$deutchmarks = Math::Currency->new( -29.95,
-	{
-		PREFIX		=>	'',
-		SEPARATOR	=>	' ',
-		DECIMAL		=>	',',
-		POSTFIX		=>	'DM',
-		FRAC_DIGITS	=>	3,
-		GROUPING	=>	3,
-	}
-);
-ok ( $deutchmarks eq '(29,950DM)', "foreign currency" );
-$newdm = $deutchmarks->new(-29.95);
-ok ( $deutchmarks == $newdm, "two object equality (numeric)" );
-ok ( $deutchmarks eq $newdm, "two object equality (string)" );
+ok ( $dollars->format('INT_CURR_SYMBOL') eq 'USD', "default format returned" );
+ok ( $dollars->format('CURRENCY_SYMBOL',"WOW"), "set a custom format");
+ok ( $dollars->format('INT_CURR_SYMBOL') eq 'USD', "default format copied" );
+ok ( $dollars eq 'WOW20.01', "custom format maintained" );
+$dollars->format(''); # defined but false
+ok ( $dollars eq '$20.01', "default format restored" );
 
-$pounds = Math::Currency->new( 98994.95,
-	{
-		PREFIX		=>	'',
-		SEPARATOR	=>	',',
-		DECIMAL		=>	'.',
-		POSTFIX		=>	'£',
-		FRAC_DIGITS	=>	2,
-		GROUPING	=>	3,
-	}
-);
+$euros = Math::Currency->new( -29.95, $LC_MONETARY->{EUR});
+ok ( $euros eq '¤-29,95', "foreign currency" );
+$newdm = $euros->new(-29.95);
+ok ( $euros == $newdm, "two object equality (numeric)" );
+ok ( $euros eq $newdm, "two object equality (string)" );
+
+$pounds = Math::Currency->new( 98994.95);
+ok ( $pounds eq '$98,994.95', "maintains global format" );
+$pounds->format($LC_MONETARY->{GBP});
+ok ( $pounds eq '£98994.95', "changes to object format" );
 
 $newpounds = $pounds + 100000;
 
 is ( ref($newpounds), ref($pounds), "autoupgrade to object" );
 
-print "\n# Formatting examples:\n";
+print "# Formatting examples:\n";
 print "# In Pounds Sterling:	$pounds\n";
 print "# In negative Dollars:	$newdollars\n";
 
-$deutchmarks = Math::Currency->new( 23459.95,
-	{
-		PREFIX		=>	'',
-		SEPARATOR	=>	' ',
-		DECIMAL		=>	',',
-		POSTFIX		=>	'DM',
-		FRAC_DIGITS	=>	3,
-		GROUPING	=>	3,
-	}
-);
+$euros = Math::Currency->new( 23459.95, $LC_MONETARY->{EUR});
+$Math::Currency::use_int = 1;
 
-print "# In Deutchmarks: 	$deutchmarks\n";
+print "# In Euros: 	$euros\n";

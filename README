@@ -1,11 +1,13 @@
 Math::Currency - Exact Currency Math with Formatting and Rounding
 
-This is a rewrite to enable the use of the new Math::BigFloat for all math
-operations.  It has also been configured to try to use Locale formatting if it
-can, or US defaults if it cannot.  The format settings can be considered at best
-experimental.  I need a lot more data from other countries to know if what I have
-done is suffient.  You are urged to use explicit format values for your country,
-rather than relying on the built-in system without further testing.
+This module uses the new Math::BigFloat for all math operations.  It permits
+currency calculations without concern with floating point notation and
+rounding issues.
+
+This version has been completely rewritten to more fully support Locale
+formatting, with special emphasis on the Euro.  There are possibly significant
+API changes with regard to the format definitions.  Please see the POD for
+more details.
 
 To install, do the usual (as non-root):
 
@@ -35,4 +37,4 @@ or from your local CPAN site.
 John Peacock
 jpeacock@rowman.com
 
-$Revision: 2.1 $
+$Revision: 3.0 $

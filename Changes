@@ -28,3 +28,18 @@ Revision history for Perl extension Math::Currency.
 	- Change version to next major level
 0.21  1/30/2002 10:56AM
 	- Adjust tests to correctly handle non-US locale
+0.22  2/01/2002 11:09AM
+	- Change public interface to use Locale LC_MONETARY codes
+	- Produce actual documentation for a change
+0.23  2/01/2002 1:08PM
+	- make the format() function much more clever
+0.24  2/01/2002 4:35PM
+	- format() will now set/get and copy the global FORMAT as needed
+0.25  2/05/2002 4:15PM
+	- Handle parentheses around negative currency
+	- Handle less than FRAC_DIGITS decimal places
+0.26  2/08/2002 4:45pm
+	- Completed support for locale formatting
+0.30  2/11/2002 11:45AM
+	- Completed rewrite of docs
+	- Increment version for release to CPAN
