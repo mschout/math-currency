@@ -37,7 +37,7 @@ use POSIX qw(locale_h);
 	Money
 );
 
-$VERSION = (qw$Revision: 3.7 $)[1]/10;
+$VERSION = (qw$Revision: 3.9 $)[1]/10;
 
 $PACKAGE = 'Math::Currency';
 
@@ -112,10 +112,7 @@ $LC_MONETARY = {
 	      },
 };
 
-
-initialize();
-
-unless ( $FORMAT->{CURRENCY_SYMBOL} ) # no active locale
+unless ( initialize() ) # no locale information available
 {
 	$FORMAT = $LC_MONETARY->{USD};
 }
@@ -322,9 +319,11 @@ sub initialize #08/17/02 7:58:PM
 	MON_DECIMAL_POINT	=> $localeconv->{'mon_decimal_point'}	|| '',
 	MON_THOUSANDS_SEP	=> $localeconv->{'mon_thousands_sep'}	|| '',
 	MON_GROUPING		=>
-	    ( ord($localeconv->{'mon_grouping'}) < 47	?
+	    ( exists $localeconv->{'mon_grouping'} and
+		  defined $localeconv->{'mon_grouping'} and
+		  ord($localeconv->{'mon_grouping'}) < 47	?
 	    	ord($localeconv->{'mon_grouping'})	:
-		$localeconv->{'mon_grouping'}
+		  $localeconv->{'mon_grouping'}
 	    ) ||  0,
 	POSITIVE_SIGN		=> $localeconv->{'positive_sign'} 	|| '',
 	NEGATIVE_SIGN		=> $localeconv->{'negative_sign'} 	|| '-',
@@ -338,7 +337,7 @@ sub initialize #08/17/02 7:58:PM
 	N_SIGN_POSN		=> $localeconv->{'n_sign_posn'}  	||  0,
     };
 
-    return 1;
+    return exists $localeconv->{'currency_symbol'} ? 1 : 0; # so you can test to see if locale was effective
 }
 
 # Autoload methods go after =cut, and are processed by the autosplit program.

@@ -63,3 +63,5 @@ Revision history for Perl extension Math::Currency.
 	- Add POD discussion of quoting input
 0.37  08/26/2002 02:24pm
 	- Forgot to fix 5.8.0 tr// error
+0.38  11/13/2002 9:58AM
+	- Protect the ord() by making sure there is a defined value to use first

@@ -86,12 +86,17 @@ is ( ref($newpounds), ref($pounds), "autoupgrade to object" );
 
 # monetary_locale testing
 use POSIX qw( locale_h );
-setlocale(LC_ALL,"en_GB");
-ok ( Math::Currency->initialize(), "Get new POSIX locale information");
-is ( $FORMAT->{INT_CURR_SYMBOL}, "GBP ", "POSIX format set properly");
-$Math::Currency::always_init = 1;
-setlocale(LC_ALL,"en_US");
-is ( $dollars, '$20.01', "POSIX format reset properly");
+my $locale = setlocale(LC_ALL,"en_GB");
+
+SKIP: {
+	# NOTE: once Test::More::skip works, replace this with skip()
+	myskip ( "No locale support", 3) unless Math::Currency->initialize();
+	pass ( "Re-initialized locale with en_GB" );
+	is ( $FORMAT->{INT_CURR_SYMBOL}, "GBP ", "POSIX format set properly");
+	$Math::Currency::always_init = 1;
+	setlocale(LC_ALL,"en_US");
+	is ( $dollars, '$20.01', "POSIX format reset properly");
+}
 
 print "# Formatting examples:\n";
 print "# In Pounds Sterling:	$pounds\n";
@@ -101,3 +106,14 @@ $euros = Math::Currency->new( 23459.95, $LC_MONETARY->{EUR});
 $Math::Currency::use_int = 1;
 
 print "# In Euros: 	$euros\n";
+
+# NOTE: once Test::More::skip works, remove this
+sub myskip {
+    my $why = shift;
+    my $n    = @_ ? shift : 1;
+    for (1..$n) {
+        pass ( "# Skip: $why");
+    }
+    local $^W = 0;
+    last SKIP;
+}
