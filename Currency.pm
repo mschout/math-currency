@@ -1,3 +1,19 @@
+#!/usr2/local/bin/perl
+#
+# PROGRAM:	Math::Currency.pm	# - 04/26/00 9:10:AM
+# PURPOSE:	Perform currency calculations without floating point
+#
+#------------------------------------------------------------------------------
+#   Copyright (c) 2000 John Peacock
+#
+#   You may distribute under the terms of either the GNU General Public
+#   License or the Artistic License, as specified in the Perl README file,
+#   with the exception that it cannot be placed on a CD-ROM or similar media
+#   for commercial distribution without the prior approval of the author.
+#------------------------------------------------------------------------------
+eval 'exec /usr2/local/bin/perl -S $0 ${1+"$@"}'
+    if 0;
+
 package Math::Currency;
 
 use strict;
@@ -9,6 +25,7 @@ use overload 	'+'		=>	\&add,
 				'*'		=>	\&multiply,
 				'/'		=>	\&divide,
 				'<=>'	=>	\&spaceship,
+				'cmp'	=>	\&compare,
                 '""'	=>	\&stringify,
 				'0+'	=>	\&numify,
 				'abs'	=>	\&absolute,
@@ -27,13 +44,15 @@ use POSIX qw(locale_h);
 	Money
 );
 
-$VERSION = '0.06';
+$VERSION = '0.08';
 
 $PACKAGE = 'Math::Currency';
 
 $CLASSDATA = {
 		SEPARATOR	=>	${localeconv()}{'mon_thousands_sep'} || ',',
 		DECIMAL		=>	${localeconv()}{'mon_decimal_point'} || '.',
+		FRAC_DIGITS =>	${localeconv()}{'frac_digits'} || '2',
+		GROUPING	=>	unpack("C*",${localeconv()}{'mon_grouping'}) || '3',
 };
 if ( ${localeconv()}{'p_cs_precedes'} eq '0' )
 {
@@ -48,7 +67,7 @@ else
 #	currency_symbol      = $
 #   frac_digits          = 2
 #	mon_decimal_point    = .
-#	mon_grouping         = 3 (get with unpack "C*" $locale_values->{'mon_decimal_point})
+#	mon_grouping         = 3 (get with unpack "C*" $locale_values->{'mon_grouping})
 #	mon_thousands_sep    = ,
 #	n_cs_precedes        = 1
 #	n_sep_by_space       = 0
@@ -73,8 +92,15 @@ sub new		#05/10/99 3:13:PM
 
 	my $value = shift;
 	my $format = shift;
-	$self->{VAL} = Math::FixedPrecision->new($value,2);
-	$self->format($format) if $format;
+	if ( $format )
+	{
+		$self->format($format);
+	}
+	if ( $parent and $parent->format )	# if we are cloning an existing instance
+	{
+		$self->format($parent->format);
+	}
+	$self->{VAL} = Math::FixedPrecision->new($value,$self->FRAC_DIGITS);
 	return $self;
 }	##new
 
@@ -192,6 +218,18 @@ sub spaceship		#05/10/99 3:48:PM
 }	##spaceship
 
 ############################################################################
+sub compare		#06/27/00 11:23:AM
+############################################################################
+
+{
+	my($dollar1,$dollar2,$inverted) = @_;
+
+	return "$dollar2"  <=> "$dollar1" if $inverted;
+	return "$dollar1"  <=> "$dollar2";
+	
+}	##compare
+
+############################################################################
 sub stringify		#05/10/99 3:52:PM
 ############################################################################
 
@@ -200,20 +238,22 @@ sub stringify		#05/10/99 3:52:PM
 	my $value = abs($self->{VAL}) + 0;
 	my $neg   = $self->{VAL} < 0 ? 1 : 0; 
 	($value = reverse "$value") =~ s/\+//;
-	if ( length($value) < 3 )
+	if ( length($value) < ${$self->format}{FRAC_DIGITS} + 1 )
 	{
-		$value .= "0" x ( 3 - length($value) ) ;
+		$value .= "0" x ( ${$self->format}{FRAC_DIGITS} + 1 - length($value) ) ;
 	}
 	$value =~ s/\./${$self->format}{DECIMAL}/;
-	$value =~ s/(\d{3})(?=\d)(?!\d*\.)/$1${$self->format}{SEPARATOR}/g;
+	$value =~ s/(\d{${$self->format}{GROUPING}})(?=\d)(?!\d*\.)/$1${$self->format}{SEPARATOR}/g;
 	$value = reverse $value;
 	if ( $neg )
 	{
-		return "(${$self->format}{PREFIX}$value${$self->format}{POSTFIX})";
+		return "(".$self->PREFIX.$value.$self->POSTFIX.")";
+#		return "(${$self->format}{PREFIX}$value${$self->format}{POSTFIX})";
 	}
 	else
 	{
-		return "${$self->format}{PREFIX}$value${$self->format}{POSTFIX}";
+		return $self->PREFIX.$value.$self->POSTFIX;
+#		return "${$self->format}{PREFIX}$value${$self->format}{POSTFIX}";
 	}
 }	##stringify
 
@@ -240,16 +280,154 @@ sub format		#05/17/99 1:58:PM
 		return $CLASSDATA;
 	}
 
-	$self->{Format} = $_[0] if @_;
-	if ( defined $self->{Format} )
+	$self->{format} = $_[0] if @_;
+	if ( defined $self->{format} )
 	{
-		return $self->{Format};
+		return $self->{format};
 	}
 	else 
 	{
 		return $CLASSDATA;
 	}
 }	##format
+
+############################################################################
+sub FRAC_DIGITS		#6/12/2000 3:28PM
+############################################################################
+
+{
+	my $self = shift;
+	my $class = ref($self ) || $self;
+
+	unless ( ref $self )
+	{
+		return "$CLASSDATA->{FRAC_DIGITS}";
+	}
+
+	if ( defined $self->{format} )
+	{
+		return "${$self->format}{FRAC_DIGITS}";
+	}
+	else 
+	{
+		return "$CLASSDATA->{FRAC_DIGITS}";
+	}
+}	##FRAC_DIGITS
+
+#############################################################################
+sub POSTFIX		#6/12/2000 3:28PM
+############################################################################
+
+{
+	my $self = shift;
+	my $class = ref($self ) || $self;
+
+	unless ( ref $self )
+	{
+		return "$CLASSDATA->{POSTFIX}";
+	}
+
+	if ( defined $self->{format} )
+	{
+		return "${$self->format}{POSTFIX}";
+	}
+	else 
+	{
+		return "$CLASSDATA->{POSTFIX}";
+	}
+}	##POSTFIX
+
+############################################################################
+sub PREFIX		#6/12/2000 3:28PM
+############################################################################
+
+{
+	my $self = shift;
+	my $class = ref($self ) || $self;
+
+	unless ( ref $self )
+	{
+		return "$CLASSDATA->{PREFIX}";
+	}
+
+	if ( defined $self->{format} )
+	{
+		return "${$self->format}{PREFIX}";
+	}
+	else 
+	{
+		return "$CLASSDATA->{PREFIX}";
+	}
+}	##PREFIX
+
+############################################################################
+sub SEPARATOR		#6/12/2000 3:28PM
+############################################################################
+
+{
+	my $self = shift;
+	my $class = ref($self ) || $self;
+
+	unless ( ref $self )
+	{
+		return "$CLASSDATA->{SEPARATOR}";
+	}
+
+	if ( defined $self->{format} )
+	{
+		return "${$self->format}{SEPARATOR}";
+	}
+	else 
+	{
+		return "$CLASSDATA->{SEPARATOR}";
+	}
+}	##SEPARATOR
+
+############################################################################
+sub DECIMAL		#6/12/2000 3:28PM
+############################################################################
+
+{
+	my $self = shift;
+	my $class = ref($self ) || $self;
+
+	unless ( ref $self )
+	{
+		return "$CLASSDATA->{DECIMAL}";
+	}
+
+	if ( defined $self->{format} )
+	{
+		return "${$self->format}{DECIMAL}";
+	}
+	else 
+	{
+		return "$CLASSDATA->{DECIMAL}";
+	}
+}	##DECIMAL
+
+############################################################################
+sub GROUPING		#6/12/2000 3:28PM
+############################################################################
+
+{
+	my $self = shift;
+	my $class = ref($self ) || $self;
+
+	unless ( ref $self )
+	{
+		return "$CLASSDATA->{GROUPING}";
+	}
+
+	if ( defined $self->{format} )
+	{
+		return "${$self->format}{GROUPING}";
+	}
+	else 
+	{
+		return "$CLASSDATA->{GROUPING}";
+	}
+}	##GROUPING
 
 ############################################################################
 sub absolute		#06/15/99 4:47:PM
@@ -293,10 +471,12 @@ Math::Currency - Exact Currency Math with Formatting and Rounding
   $taxamt = $dollar * 0.28;
   Math::Currency->format(
 	{ 
-		PREFIX    =>  '',
-		SEPARATOR =>  ' ',
-		DECIMAL   =>  ',',
-		POSTFIX   =>  ' DM'
+		PREFIX      =>     '',
+		SEPARATOR   =>    ' ',
+		DECIMAL     =>    ',',
+		POSTFIX     =>  ' DM',
+		FRAC_DIGITS =>      2,
+		GROUPING    =>      3,
 	});
   $deutschmark = Money(12345.67);
 
@@ -308,15 +488,16 @@ allowed and division/multiplication should never create more accuracy than the
 original values.  All currency values should round to the closest cent or
 whatever the local equivalent should happen to be.
 
-The default formatting methods 
-A currency value can
-have an individual format or the global currency format can be changed to
-reflect local usage.  I used the suggestions in Tom Christiansen's L<PerlTootC|http://www.perl.com/language/misc/perltootc.html#Translucent_Attributes>
-to implement translucent attributes.
+Each currency value can have an individual format or the global currency 
+format can be changed to reflect local usage.  I used the suggestions in Tom 
+Christiansen's L<PerlTootC|http://www.perl.com/language/misc/perltootc.html#Translucent_Attributes>
+to implement translucent attributes.  If you have set your locale values 
+correctly, this module will pick up your local settings or US standards if you 
+haven't.
 
 All common mathematical operations are overloaded, so once you initialize a
-currency variable, you can treat it like any number and get what you would
-expect.  
+currency variable, you can treat it like any number and the module will do
+the right thing.
 
 =head1 AUTHOR
 
