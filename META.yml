@@ -1,0 +1,23 @@
+---
+name: Math-Currency
+version: 0.40
+author:
+  - John Peacock <jpeacock@cpan.org>
+abstract: Exact Currency Math with Formatting and Rounding
+license: perl
+requires:
+  Math::BigFloat: 1.47
+provides:
+  Math::Currency:
+    file: lib/Math/Currency.pm
+    version: 0.40
+  Math::Currency::EUR:
+    file: lib/Math/Currency/EUR.pm
+    version: 0.01
+  Math::Currency::GBP:
+    file: lib/Math/Currency/GBP.pm
+    version: 0.01
+  Math::Currency::JPY:
+    file: lib/Math/Currency/JPY.pm
+    version: 0.01
+generated_by: Module::Build version 0.2607

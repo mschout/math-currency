@@ -1,38 +1,32 @@
 Math::Currency - Exact Currency Math with Formatting and Rounding
 
-This module uses the new Math::BigFloat for all math operations.  It permits
+This module uses Math::BigFloat for all math operations.  It permits
 currency calculations without concern with floating point notation and
 rounding issues.
 
 This version has been completely rewritten to more fully support Locale
 formatting, with special emphasis on the Euro.  There are possibly significant
-API changes with regard to the format definitions.  Please see the POD for
-more details.
+API changes with regard to the format definitions.  In particular, all of
+the locale formats are now implemented as subclasses, with a script
+available for generating site specific subclasses for installation.  Please
+see the POD for more details.
 
-To install, do the usual (as non-root):
+This release has also been converted to use Module::Build, so to install, 
+do the following (as non-root):
 
-        perl Makefile.PL
-        make
-        make test
+        perl Build.PL
+        ./Build
+        ./Build test
 
 You can alternately run
 
-	make test TEST_VERBOSE=1
+	./Build test TEST_VERBOSE=1
 
 to see the actual tests being run, as well as some example outputs.
 
 Then to install the module (as root):
 
-        make install
-
-NOTE:  If you are not running Perl 5.8.0, you must install at least Math::BigFloat 1.27 before
-installing this module.  You can get Math::BigFloat as part of the Math::BigInt distribution
-found on CPAN:
-
-	http://search.cpan.org/search?mode=module&query=Math%3A%3ABigFloat
-
+        ./Build install
 
 John Peacock
-jpeacock@rowman.com
-
-$Revision: 3.3 $
+jpeacock@cpan.org
