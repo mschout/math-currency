@@ -1,0 +1,27 @@
+Math::Currency - Perl extension for performing exact currency math
+
+This module has been in use internally for the last 3 months or so.
+I was driven to write it because I needed to match the outstanding
+Accounts Receivable balance to the penny when converting from one
+warehouse distribution system to another.  If you have to work with
+currency values, this module will probably save to a lot of heart-
+burn trying to match things exactly (which the accountants are so
+picky about ;).
+
+The included documentation is sparse but probably adequate.  Do the
+usual:
+
+	perl Makefile.PL
+	make
+	make test
+	make install
+
+Based on feedback from other users, I will change or not change
+the interface.  I would like to have a set of international formats
+preprogrammed so that anyone can use it with little work.  You can
+still do whatever you like now, it is just not as clever/pretty as
+I would like.
+
+John Peacock
+JPeacock@UnivPress.com
+10/4/99

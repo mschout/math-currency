@@ -1,0 +1,10 @@
+Revision history for Perl extension Math::Currency.
+
+0.01  Mon May 10 15:11:36 1999
+	- original version; created by h2xs 1.18
+	- not publicly released
+0.02  Thu May 27 16:21:00 1999
+	- implement translucent print format
+0.03  Mon Oct 4  21:20:00 1999
+	- finally deal with negative numbers and < 1.00 properly
+	- first CPAN release
