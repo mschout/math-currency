@@ -48,3 +48,18 @@ Revision history for Perl extension Math::Currency.
 0.32  3/06/2002 3:09PM
 	- Forgot to enforce precision on objects with only global format
 	- Need to have ->new() called from M::BI::objectify use M::BF::new instead
+0.33  08/17/2002 4:02PM
+        - Trailing decimal point for currency without fraction (Jacques
+          Deguest)
+        - Added JPY to preset formats
+0.34  08/17/2002 10:18PM
+        - Add monetary_locale to reset global $FORMAT to new POSIX locale
+        - Reformat POD to look a little nicer
+0.35  08/18/2002 9:51pm
+	- Rename monetary_locale() to initialize() and make module use it itself.
+	- Document in POD
+0.36  08/26/2002 10:57am
+	- Add $always_init global parameter and test initialize() in format()
+	- Add POD discussion of quoting input
+0.37  08/26/2002 02:24pm
+	- Forgot to fix 5.8.0 tr// error

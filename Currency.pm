@@ -18,7 +18,7 @@ package Math::Currency;
 
 use strict;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $PACKAGE $FORMAT $LC_MONETARY
-	    $accuracy $precision $div_scale $round_mode $use_int);
+	    $accuracy $precision $div_scale $round_mode $use_int $always_init);
 use Exporter;
 use Math::BigFloat 1.27;
 use overload	'""'	=>	\&bstr;
@@ -37,7 +37,7 @@ use POSIX qw(locale_h);
 	Money
 );
 
-$VERSION = (qw$Revision: 3.2 $)[1]/10;
+$VERSION = (qw$Revision: 3.7 $)[1]/10;
 
 $PACKAGE = 'Math::Currency';
 
@@ -93,25 +93,27 @@ $LC_MONETARY = {
 		P_SIGN_POSN 		=> '1',
 		N_SIGN_POSN 		=> '1',
 	      },
+	JPY => {
+		INT_CURR_SYMBOL 	=> 'JPY ',
+		CURRENCY_SYMBOL         => '¥',
+		MON_DECIMAL_POINT       => '.',
+		MON_THOUSANDS_SEP       => ',',
+		MON_GROUPING            => '3',
+		POSITIVE_SIGN           => '',
+		NEGATIVE_SIGN           => '-',
+		INT_FRAC_DIGITS         => '0',
+		FRAC_DIGITS             => '0',
+		P_CS_PRECEDES           => '1',
+		P_SEP_BY_SPACE          => '0',
+		N_CS_PRECEDES           => '1',
+		N_SEP_BY_SPACE          => '0',
+		P_SIGN_POSN             => '1',
+		N_SIGN_POSN             => '4',
+	      },
 };
 
-$FORMAT = {
-	INT_CURR_SYMBOL		=> ${localeconv()}{'int_curr_symbol'} 	|| '',
-	CURRENCY_SYMBOL		=> ${localeconv()}{'currency_symbol'} 	|| '',
-	MON_DECIMAL_POINT	=> ${localeconv()}{'mon_decimal_point'}	|| '',
-	MON_THOUSANDS_SEP	=> ${localeconv()}{'mon_thousands_sep'}	|| '',
-	MON_GROUPING		=> ${localeconv()}{'mon_grouping'} 	||  0,
-	POSITIVE_SIGN		=> ${localeconv()}{'positive_sign'} 	|| '',
-	NEGATIVE_SIGN		=> ${localeconv()}{'negative_sign'} 	|| '-',
-	INT_FRAC_DIGITS		=> ${localeconv()}{'int_frac_digits'} 	||  0,
-	FRAC_DIGITS		=> ${localeconv()}{'frac_digits'} 	||  0,
-	P_CS_PRECEDES		=> ${localeconv()}{'p_cs_precedes'}  	||  0,
-	P_SEP_BY_SPACE		=> ${localeconv()}{'p_sep_by_space'}  	||  0,
-	N_CS_PRECEDES		=> ${localeconv()}{'n_cs_precedes'}  	||  0,
-	N_SEP_BY_SPACE		=> ${localeconv()}{'n_sep_by_space'}  	||  0,
-	P_SIGN_POSN		=> ${localeconv()}{'p_sign_posn'}  	||  1,
-	N_SIGN_POSN		=> ${localeconv()}{'n_sign_posn'}  	||  0,
-};
+
+initialize();
 
 unless ( $FORMAT->{CURRENCY_SYMBOL} ) # no active locale
 {
@@ -124,6 +126,7 @@ $accuracy   = undef;
 $precision  = $FORMAT->{FRAC_DIGITS} > 0 ? -$FORMAT->{FRAC_DIGITS} : 0;
 $div_scale  = 40;
 $use_int    = 0;
+$always_init = 0;	# should the initialize() happen every time?
 
 
 # Preloaded methods go here.
@@ -143,7 +146,7 @@ sub new		#05/10/99 3:13:PM
 		return Math::BigFloat->new($value);
 	}
 
-	$value =~ tr/()-0-9.//cd;	#strip any formatting characters
+	$value =~ tr/-()0-9.//cd;	#strip any formatting characters
 	$value = "-$value" if $value=~s/(^\()|(\)$)//g;	# handle parens
 	my $self;
 	my $format = shift;
@@ -243,6 +246,10 @@ sub bstr		#05/10/99 3:52:PM
 		    		[$myformat->{P_SEP_BY_SPACE}]
 	    ) . '"';
 
+	if ( substr($value,-1,1) eq '.' ) { # trailing bare decimal
+	    chop($value);
+	}
+
 	return $value;
 }	##stringify
 
@@ -254,6 +261,7 @@ sub format		#05/17/99 1:58:PM
 	my $self = shift;
 	my $key = shift;	# do they want to display or set?
 	my $value = shift;      # did they supply a value?
+	initialize() if $always_init; # always reset the global format?
 	my $source = \$FORMAT;	# default format rules
 
 	if ( ref($self) )
@@ -299,6 +307,40 @@ sub format		#05/17/99 1:58:PM
 	return $$source;
 }	##format
 
+############################################################################
+sub initialize #08/17/02 7:58:PM
+############################################################################
+
+{
+    my $self = shift;
+
+    my $localeconv = POSIX::localeconv();
+
+    $FORMAT = {
+	INT_CURR_SYMBOL		=> $localeconv->{'int_curr_symbol'} 	|| '',
+	CURRENCY_SYMBOL		=> $localeconv->{'currency_symbol'} 	|| '',
+	MON_DECIMAL_POINT	=> $localeconv->{'mon_decimal_point'}	|| '',
+	MON_THOUSANDS_SEP	=> $localeconv->{'mon_thousands_sep'}	|| '',
+	MON_GROUPING		=>
+	    ( ord($localeconv->{'mon_grouping'}) < 47	?
+	    	ord($localeconv->{'mon_grouping'})	:
+		$localeconv->{'mon_grouping'}
+	    ) ||  0,
+	POSITIVE_SIGN		=> $localeconv->{'positive_sign'} 	|| '',
+	NEGATIVE_SIGN		=> $localeconv->{'negative_sign'} 	|| '-',
+	INT_FRAC_DIGITS		=> $localeconv->{'int_frac_digits'} 	||  0,
+	FRAC_DIGITS		=> $localeconv->{'frac_digits'} 	||  0,
+	P_CS_PRECEDES		=> $localeconv->{'p_cs_precedes'}  	||  0,
+	P_SEP_BY_SPACE		=> $localeconv->{'p_sep_by_space'}  	||  0,
+	N_CS_PRECEDES		=> $localeconv->{'n_cs_precedes'}  	||  0,
+	N_SEP_BY_SPACE		=> $localeconv->{'n_sep_by_space'}  	||  0,
+	P_SIGN_POSN		=> $localeconv->{'p_sign_posn'}  	||  1,
+	N_SIGN_POSN		=> $localeconv->{'n_sign_posn'}  	||  0,
+    };
+
+    return 1;
+}
+
 # Autoload methods go after =cut, and are processed by the autosplit program.
 
 1;
@@ -333,6 +375,28 @@ currency variable, you can treat it like any number and the module will do
 the right thing.  This module is a thin layer over Math::BigFloat which
 is itself a layer over Math::BigInt.
 
+=head1 Important Note on Input Values
+
+Since the point of this module is to perform currency math and not floating
+point math, it is important to understand how the initial value passed to new()
+may have nasty side effects if done improperly.  Most of the time, the following
+two objects are identical:
+
+	$cur1 = new Math::Currency 1000.01;
+	$cur2 = new Math::Currency "1000.01";
+
+However, only the second is guaranteed to do what you think it should do.  The
+reason for that lies in how Perl treats bare numbers as opposed to strings.  The
+first new() will receive the Perl-stringified representation of the number
+1000.01, whereas the second new() will receive the string "1000.01" instead.
+With most locale settings, this will be largely identical.  However, with many
+European locales (like fr_FR), the first new() will receive the string
+"1 000,01" and this will cause Math::BigFloat to report this as NAN (Not A
+Number) because of the odd posix driven formatting.
+
+For this reason, it is always recommended that input values be quoted at all
+times, even if your POSIX locale does not have this unfortunate side effect.
+
 =head1 Output Formatting
 
 Each currency value can have an individual format or the global currency
@@ -347,7 +411,7 @@ haven't.
 The locale definition includes two different Currency Symbol strings: one
 is the native character(s), like $ or £ or DM; the other is the three
 character string defined by the ISO4217 specification followed by the
-normal currency seperation character (frequently space).  The default
+normal currency separation character (frequently space).  The default
 behavior is to always display the native CURRENCY_SYMBOL unless a global
 parameter is set:
 
@@ -357,11 +421,12 @@ where the INT_CURR_SYMBOL text will used instead.
 
 =head2 Predefined Locales
 
-There are currently three predefined Locale LC_MONETARY formats:
+There are currently four predefined Locale LC_MONETARY formats:
 
     USD = United States dollars (the default if no locale)
     EUR = One possible Euro format (no single standard, yet)
     GBP = British Pounds Sterling
+    JPY = Japanese Yen (with extended ASCII currency character)
 
 These hashes can be retrieved using the optional export $LC_MONETARY, like
 this:
@@ -379,6 +444,37 @@ this:
 
     Math::Currency->format($LC_MONETARY->{USD});
 
+=head2 POSIX Locale Global Formatting
+
+In addition to the four predefined formats listed above, you can also use
+the POSIX monetary format for a locale which you are not currently running
+(e.g. for a web site).  You can set the global monetary format in effect
+at any time by using:
+
+    use POSIX qw( locale_h );
+    setlocale(LC_ALL,"en_GB");   # some locale alias
+    Math::Currency->initialize;  # reinitialize global format
+
+If you don't want to always have to remember to reinitialize the POSIX settings
+when you switch locales, you can set the global parameter:
+
+	$Math::Currency::always_init = 1;
+
+and every single time a M::C object is printed, the global $FORMAT will be
+updated to the locale current at that time.  This may be a performance hit.  It
+would be better if you followed the first method of manually updating the global
+format immediately after you reset the locale.
+
+NOTE: This function will reset only the global format and will not have
+effect on objects created with their own overridden formats, even if they were
+originally based on the global format.
+
+NOTE 2: You must have all the locale files in question already loaded; the list
+reported by `locale -a` is not always a reliable judge of what files you
+might actually have installed.  If you try and set a nonexistant locale,
+or set the same locale as is already active, the module will silently retain
+the current locale settings.
+
 =head2 Object Formats
 
 Any object can have it's own format different from the current global format,
@@ -393,7 +489,6 @@ like this:
 The format must contains all of the commonly configured LC_MONETARY
 Locale settings.  For example, these are the values of the default US format
 (with comments):
-
   {
     INT_CURR_SYMBOL    => 'USD',  # ISO currency text
     CURRENCY_SYMBOL    => '$',    # Local currency character
@@ -456,9 +551,9 @@ John Peacock <jpeacock@rowman.com>
 
 =head1 SEE ALSO
 
-perl(1).
-perllocale
-Math::BigFloat
-Math::BigInt
+ perl(1).
+ perllocale
+ Math::BigFloat
+ Math::BigInt
 
 =cut

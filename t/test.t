@@ -7,7 +7,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-use Test::More tests => 43;
+use Test::More tests => 46;
 use Math::Currency qw(Money $LC_MONETARY $FORMAT);
 use_ok( Math::Currency );
 
@@ -83,6 +83,15 @@ ok ( $pounds eq '£98994.95', "changes to object format" );
 $newpounds = $pounds + 100000;
 
 is ( ref($newpounds), ref($pounds), "autoupgrade to object" );
+
+# monetary_locale testing
+use POSIX qw( locale_h );
+setlocale(LC_ALL,"en_GB");
+ok ( Math::Currency->initialize(), "Get new POSIX locale information");
+is ( $FORMAT->{INT_CURR_SYMBOL}, "GBP ", "POSIX format set properly");
+$Math::Currency::always_init = 1;
+setlocale(LC_ALL,"en_US");
+is ( $dollars, '$20.01', "POSIX format reset properly");
 
 print "# Formatting examples:\n";
 print "# In Pounds Sterling:	$pounds\n";

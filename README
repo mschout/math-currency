@@ -25,16 +25,14 @@ Then to install the module (as root):
 
         make install
 
-NOTE:  You must install Math::BigFloat 1.27 before installing this module,
-which is not currently part of the Perl core (it will be included with 5.6.2).
-You can get Math::BigFloat as part of the Math::BigInt 1.49 distribution found
-here:
+NOTE:  If you are not running Perl 5.8.0, you must install at least Math::BigFloat 1.27 before
+installing this module.  You can get Math::BigFloat as part of the Math::BigInt distribution
+found on CPAN:
 
-	http://www.cpan.org/modules/by-module/Math/Math-BigInt-1.49.tar.gz
+	http://search.cpan.org/search?mode=module&query=Math%3A%3ABigFloat
 
-or from your local CPAN site.
 
 John Peacock
 jpeacock@rowman.com
 
-$Revision: 3.2 $
+$Revision: 3.3 $
