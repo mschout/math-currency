@@ -1,4 +1,4 @@
-#!/usr2/local/bin/perl
+#!/usr2/local/bin/perl -w
 #
 # PROGRAM:	Math::Currency.pm	# - 04/26/00 9:10:AM
 # PURPOSE:	Perform currency calculations without floating point
@@ -17,21 +17,10 @@ eval 'exec /usr2/local/bin/perl -S $0 ${1+"$@"}'
 package Math::Currency;
 
 use strict;
-use Carp;
 use vars qw($VERSION @ISA @EXPORT @EXPORT_OK $PACKAGE $CLASSDATA);
-require Exporter;
-require Math::FixedPrecision;
-use overload 	'+'		=>	\&add,
-				'-'		=>	\&subtract,
-				'*'		=>	\&multiply,
-				'/'		=>	\&divide,
-				'<=>'	=>	\&spaceship,
-				'cmp'	=>	\&compare,
-                '""'	=>	\&stringify,
-				'0+'	=>	\&numify,
-				'abs'	=>	\&absolute,
-				'bool'	=>	\&boolean,
-				;
+use Exporter;
+use Math::FixedPrecision(0.10);
+use overload	'""'	=>	\&stringify;
 use POSIX qw(locale_h);
 
 @ISA = qw(Exporter Math::FixedPrecision);
@@ -45,7 +34,7 @@ use POSIX qw(locale_h);
 	Money
 );
 
-$VERSION = '0.09';
+$VERSION = '0.10';
 
 $PACKAGE = 'Math::Currency';
 
@@ -53,9 +42,10 @@ $CLASSDATA = {
 		SEPARATOR	=>	${localeconv()}{'mon_thousands_sep'} || ',',
 		DECIMAL		=>	${localeconv()}{'mon_decimal_point'} || '.',
 		FRAC_DIGITS =>	${localeconv()}{'frac_digits'} || '2',
-		GROUPING	=>	unpack("C*",${localeconv()}{'mon_grouping'}) || '3',
+		GROUPING	=>	defined ${localeconv()}{'mon_grouping'} &&
+						unpack("C*",${localeconv()}{'mon_grouping'}) || '3',
 };
-if ( ${localeconv()}{'p_cs_precedes'} eq '0' )
+if ( defined ${localeconv()}{'p_cs_precedes'} and ${localeconv()}{'p_cs_precedes'} eq '0' )
 {
 	$CLASSDATA->{PREFIX}	= '';
 	$CLASSDATA->{POSTFIX}	= ${localeconv()}{'currency_symbol'} || '$';
@@ -89,21 +79,56 @@ sub new		#05/10/99 3:13:PM
 	my $class  = ref($proto) || $proto;
 	my $parent = ref($proto) && $proto;
 
-	my $self = bless {}, $class;
-
 	my $value = shift;
+	$value =~ tr/-0-9.//cd;	#strip any formatting characters
+	my $self;
 	my $format = shift;
 	if ( $format )
 	{
+		$self = Math::FixedPrecision->new($value,$format->{FRAC_DIGITS});
+		bless $self, $class;
 		$self->format($format);
 	}
-	if ( $parent and $parent->format )	# if we are cloning an existing instance
+	elsif ( $parent and $parent->format )	# if we are cloning an existing instance
 	{
+		$self = Math::FixedPrecision->new($value,$parent->format->{FRAC_DIGITS}); # = bless {}, $class
+		bless $self, $class;
 		$self->format($parent->format);
 	}
-	$self->{VAL} = Math::FixedPrecision->new($value,$self->FRAC_DIGITS);
+	else 
+	{
+		$self = Math::FixedPrecision->new($value,$CLASSDATA->{FRAC_DIGITS}); # = bless {}, $class
+		bless $self, $class;
+	}
 	return $self;
 }	##new
+
+############################################################################
+sub _new		#07/28/00 4:50:PM
+############################################################################
+
+{
+	my $proto  = shift;
+	my $class  = ref($proto) || $proto;
+	my $parent = ref($proto) && $proto;
+
+	my $value = shift;
+	$value =~ tr/-0-9.//cd;	#strip any formatting characters
+	my $self;
+	my $dp = shift;
+	if ( $parent and $parent->format )	# if we are cloning an existing instance
+	{
+		$self = Math::FixedPrecision->new($value,$parent->format->{FRAC_DIGITS}); # = bless {}, $class
+		bless $self, $class;
+		$self->format($parent->format);
+	}
+	else 
+	{
+		$self = Math::FixedPrecision->new($value,$CLASSDATA->{FRAC_DIGITS}); # = bless {}, $class
+		bless $self, $class;
+	}
+	return $self;
+}	##_new
 
 ############################################################################
 sub Money		#05/10/99 4:16:PM
@@ -113,125 +138,6 @@ sub Money		#05/10/99 4:16:PM
 	return $PACKAGE->new(@_);
 }	##Money
 
-##########################################################################
-#sub _new		#05/10/99 5:06:PM
-#				 only use for values already offset by 100
-###########################################################################
-
-#{
-#	my $proto  = shift;
-#	my $class  = ref($proto) || $proto;
-#	my $parent = ref($proto) && $proto;
-
-#	my $self = bless {}, $class;
-
-#	my $value = shift;
-#	my $format = shift;
-#	%$self = %$proto if ref $proto;
-#	$self->{VAL} = Math::FixedPrecision->_new($value,2);
-#	$self->format($format) if $format;
-#	return $self;
-#}	##new_int
-
-##########################################################################
-sub add		#05/10/99 5:00:PM
-##########################################################################
-
-{
-	my($oper1,$oper2,$inverted) = @_;
-
-	unless ( ref $oper2 )
-	{
-		$oper2 = $PACKAGE->new($oper2);
-	}
-
-	return ( $PACKAGE->new( $oper1->{VAL} + $oper2->{VAL},$oper1->format ) ) unless $inverted;
-	return ( $PACKAGE->new( $oper2->{VAL} + $oper1->{VAL},$oper2->format ) )
-}	##add
-
-
-##########################################################################
-sub subtract		#05/10/99 5:05:PM
-##########################################################################
-
-{
-	my($oper1,$oper2,$inverted) = @_;
-
-	unless ( ref $oper2 )
-	{
-		$oper2 = $PACKAGE->new($oper2);
-	}
-
-	return ( $PACKAGE->new( $oper1->{VAL} - $oper2->{VAL},$oper1->format ) ) unless $inverted;
-	return ( $PACKAGE->new( $oper2->{VAL} - $oper1->{VAL},$oper2->format ) )
-}	##subtract
-
-
-##########################################################################
-sub multiply		#05/10/99 5:12:PM
-##########################################################################
-
-{
-	my($oper1,$oper2,$inverted) = @_;
-
-	if ( ref $oper2 )
-	{
-	 	carp "Do you really mean to multiply currency values?";
-		$oper2 = $oper2->{VAL};
-	}
-
-	return $PACKAGE->new( $oper1->{VAL} * $oper2,$oper1->format );
-	
-}	##multiply
-
-##########################################################################
-sub divide		#05/10/99 5:12:PM
-##########################################################################
-
-{
-	my($oper1,$oper2,$inverted) = @_;
-
-	if ( ref $oper2 )
-	{
-		carp "Do you really mean to divide currency values?";
-		$oper2 = $oper2->{VAL};
-	}
-
-	return ( $PACKAGE->new( $oper1->{VAL} / $oper2,$oper1->format ) ) unless $inverted;
-	return ( $PACKAGE->new( $oper2 / $oper1->{VAL},$oper2->format ) )
-	
-}	##divide
-
-##########################################################################
-sub spaceship		#05/10/99 3:48:PM
-##########################################################################
-
-{
-	my($dollar1,$dollar2,$inverted) = @_;
-
-	unless ( ref $dollar2 )
-	{
-		$dollar2 = $PACKAGE->new($dollar2);
-	}
-
-	my $sgn = $inverted ? -1 : 1;
-
-	return $sgn * ( $dollar1->{VAL}  <=> $dollar2->{VAL}  );
-	
-}	##spaceship
-
-############################################################################
-sub compare		#06/27/00 11:23:AM
-############################################################################
-
-{
-	my($dollar1,$dollar2,$inverted) = @_;
-
-	return "$dollar2"  <=> "$dollar1" if $inverted;
-	return "$dollar1"  <=> "$dollar2";
-	
-}	##compare
-
 ############################################################################
 sub stringify		#05/10/99 3:52:PM
 ############################################################################
@@ -240,10 +146,12 @@ sub stringify		#05/10/99 3:52:PM
 	my $self  = shift;
 	my $value = abs($self->{VAL}) + 0;
 	my $neg   = $self->{VAL} < 0 ? 1 : 0; 
+	my $dp = length($value) - index($value, ".") - 1;
+	$value .= "0" x ( ${$self->format}{FRAC_DIGITS} - $dp ) if $dp < ${$self->format}{FRAC_DIGITS};
 	($value = reverse "$value") =~ s/\+//;
-	if ( length($value) < ${$self->format}{FRAC_DIGITS} + 1 )
+	if ( substr($value,-1,1) eq '.' )	# make sure there is a leading 0 for values < 1
 	{
-		$value .= "0" x ( ${$self->format}{FRAC_DIGITS} + 1 - length($value) ) ;
+		$value .= "0";
 	}
 	$value =~ s/\./${$self->format}{DECIMAL}/;
 	$value =~ s/(\d{${$self->format}{GROUPING}})(?=\d)(?!\d*\.)/$1${$self->format}{SEPARATOR}/g;
@@ -251,23 +159,12 @@ sub stringify		#05/10/99 3:52:PM
 	if ( $neg )
 	{
 		return "(".$self->PREFIX.$value.$self->POSTFIX.")";
-#		return "(${$self->format}{PREFIX}$value${$self->format}{POSTFIX})";
 	}
 	else
 	{
 		return $self->PREFIX.$value.$self->POSTFIX;
-#		return "${$self->format}{PREFIX}$value${$self->format}{POSTFIX}";
 	}
 }	##stringify
-
-############################################################################
-sub numify		#05/11/99 12:02:PM
-############################################################################
-
-{
-	my $self = shift;
-	return ( ($self->{VAL} + 50)/100 );
-}	##numify
 
 ############################################################################
 sub format		#05/17/99 1:58:PM
@@ -432,36 +329,10 @@ sub GROUPING		#6/12/2000 3:28PM
 	}
 }	##GROUPING
 
-############################################################################
-sub absolute		#06/15/99 4:47:PM
-############################################################################
-
-{
-	my $self = shift;
-	return $PACKAGE->new( abs($self->{VAL}) );
-}	##absolute
-
-############################################################################
-sub boolean		#06/28/99 9:47:AM
-############################################################################
-
-{
-    my($object) = @_;
-    my($result);
-
-    eval
-    {
-        $result = $object->{VAL}->is_empty();
-    };
-    return(! $result);
-}	##boolean
-
 # Autoload methods go after =cut, and are processed by the autosplit program.
 
 1;
 __END__
-
-# Below is the stub of documentation for your module. You better edit it!
 
 =head1 NAME
 
@@ -469,7 +340,7 @@ Math::Currency - Exact Currency Math with Formatting and Rounding
 
 =head1 SYNOPSIS
 
-  use Math::Currency;
+  use Math::Currency qw(Money);
   $dollar = Math::Currency->new("$12,345.67");
   $taxamt = $dollar * 0.28;
   Math::Currency->format(
@@ -482,6 +353,9 @@ Math::Currency - Exact Currency Math with Formatting and Rounding
 		GROUPING    =>      3,
 	});
   $deutschmark = Money(12345.67);
+  $deutschmark_string = Money(12345.67)->stringify();
+  # or if you already have a Math::Currency object
+  $deutschmark_string = "$deutschmark"; 
 
 =head1 DESCRIPTION
 
@@ -500,7 +374,10 @@ haven't.
 
 All common mathematical operations are overloaded, so once you initialize a
 currency variable, you can treat it like any number and the module will do
-the right thing.
+the right thing.  This module is a thin layer over Math::FixedPrecision which
+is itself a layer over Math::BigFloat which is itself a layer over Math::BigInt.
+The module optionally exports a single function Money() which can be used
+instead of Math::Currency->new().																		  
 
 =head1 AUTHOR
 
@@ -510,6 +387,6 @@ John Peacock <JPeacock@UnivPress.com>
 
 perl(1).
 perllocale
-
+Math::FixedPrecision
 
 =cut

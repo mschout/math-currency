@@ -19,3 +19,5 @@ Revision history for Perl extension Math::Currency.
 0.09  Tue Jun 27 14:45:09 2000
 	- Change multiply and divide to not promote term to currency type
 	- kick self repeatedly for being stupid
+0.10  7/28/2000 4:18PM
+	- Change everything, now inherits everything from Math::FixedPrecision

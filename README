@@ -3,7 +3,7 @@ Math::Currency - Exact Currency Math with Formatting and Rounding
 This is a major rewrite to enable the use of Math::FixedPrecision for all math
 functions instead of internal functions.  It has also been configured to try 
 to use Locale formatting if it can, or US defaults if it cannot.  The format
-setttings can be considered at best experimental.  I need a lot more data from
+settings can be considered at best experimental.  I need a lot more data from
 other countries to know if what I have done is suffient.  You are urged to use
 explicit format values for your country, rather than relying on the built-in
 system without further testing.

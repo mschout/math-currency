@@ -1,3 +1,4 @@
+#!/bin/perl -w
 # Before `make install' is performed this script should be runnable with
 # `make test'. After `make install' it should work as `perl test.pl'
 
@@ -6,7 +7,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-BEGIN { $| = 1; print "1..6\n"; }
+BEGIN { $| = 1; print "1..8\n"; }
 END {print "not ok 1\n" unless $loaded;}
 use Math::Currency(Money);
 $loaded = 1;
@@ -31,7 +32,7 @@ if ( $dollars < 3500 )
 }
 print "ok 4\n";
 
-unless ( $dollars eq "$12,020.99" )
+unless ( $dollars eq '$12,020.99' )
 {
 	print "not";
 }
@@ -44,6 +45,20 @@ unless ( $dollars * 0.555 == 31.08 )
 	print "not";
 }
 print "ok 6\n";
+
+$dollars = Math::Currency->new(20.01);
+
+unless ( $dollars * 1.0 == 20.01 )
+{
+	print "not";
+}
+print "ok 7\n";
+
+unless ( $dollars * -1.0 == -20.01 )
+{
+	print "not";
+}
+print "ok 8\n";
 
 print "\nFormatting tests:\n";
 
@@ -71,4 +86,17 @@ $newpounds = $pounds->new(39.95);
 print "$newpounds\n";
 
 $newpounds = $newpounds + 100000;
-print "$newpounds";
+print "$newpounds\n";
+
+$deutchmarks = Math::Currency->new( -29.95, 
+	{
+		PREFIX		=>	'',
+		SEPARATOR	=>	' ',
+		DECIMAL		=>	',',
+		POSTFIX		=>	'DM',
+		FRAC_DIGITS	=>	3,
+		GROUPING	=>	3,
+	}
+);
+
+print $deutchmarks;
