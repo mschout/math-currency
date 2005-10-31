@@ -7,7 +7,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-use Test::More tests => 45;
+use Test::More tests => 47;
 use Math::Currency qw(Money $LC_MONETARY $FORMAT);
 use_ok( Math::Currency );
 
@@ -52,31 +52,34 @@ is ( $dollars,'$4.00', "auto decimal places to FRAC_DIGITS" );
 
 $dollars = Math::Currency->new(56);
 
-ok ( $dollars * 0.555 == 31.08, "multiply followed by auto-round" );
+cmp_ok ( $dollars * 0.555, '==', 31.08, "multiply followed by auto-round" );
 
 $dollars = Math::Currency->new(20.01);
 
-ok ( $dollars * 1.0 == 20.01, "identity multiply");
+cmp_ok ( $dollars * 1.0, '==', 20.01, "identity multiply");
 
 $newdollars = $dollars * -1.0;
 
-ok (  $newdollars == -20.01, "negative identity multiply" );
+cmp_ok ( $newdollars, '==', -20.01, "negative identity multiply" );
 
-ok ( $dollars->format('INT_CURR_SYMBOL') eq 'USD ', "default format returned" );
+cmp_ok ( $dollars + '$1.00', '==', 21.01, "Add currency string (inherited add)" );
+cmp_ok ( $dollars + '($1.00)', '==', 19.01, "Add currency string (parens negative)");
+
+is ( $dollars->format('INT_CURR_SYMBOL'), 'USD ', "default format returned" );
 ok ( $dollars->format('CURRENCY_SYMBOL',"WOW "), "set a custom format");
-ok ( $dollars->format('INT_CURR_SYMBOL') eq 'USD ', "default format copied" );
-ok ( $dollars eq 'WOW 20.01', "custom format maintained" );
+is ( $dollars->format('INT_CURR_SYMBOL'), 'USD ', "default format copied" );
+is ( $dollars, 'WOW 20.01', "custom format maintained" );
 $dollars->format(''); # defined but false
-ok ( $dollars eq '$20.01', "default format restored" );
+is ( $dollars, '$20.01', "default format restored" );
 
-$euros = Math::Currency->new( -29.95, 'EUR');
-ok ( $euros eq '-д29,95', "foreign currency" );
-$newdm = $euros->new(-29.95);
-ok ( $euros == $newdm, "two object equality (numeric)" );
-ok ( $euros eq $newdm, "two object equality (string)" );
+$yen = Math::Currency->new( -2995.95, 'JPY');
+is ( $yen, 'бя-2,996', "foreign currency with auto-rounding" );
+$newyen = $yen->new(-2996);
+ok ( $yen == $newyen, "two object equality (numeric)" );
+ok ( $yen eq $newyen, "two object equality (string)" );
 
 $pounds = Math::Currency->new( 98994.95, 'GBP');
-ok ( $pounds eq 'г98,994.95', "changes to object format" );
+is ( $pounds, 'г98,994.95', "changes to object format" );
 
 $newpounds = $pounds + 100000;
 
@@ -99,8 +102,8 @@ print "# Formatting examples:\n";
 print "# In Pounds Sterling:	$pounds\n";
 print "# In negative Dollars:	$newdollars\n";
 
-$euros = Math::Currency->new( 23459.95, 'EUR');
+$yen = Math::Currency->new( 23459.95, 'JPY');
 $Math::Currency::use_int = 1;
 
-print "# In Euros: 	$euros\n";
+print "# In yen: 	$yen\n";
 

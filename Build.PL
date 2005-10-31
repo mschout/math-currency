@@ -4,7 +4,7 @@ my $class = Module::Build->subclass
 (
     class => 'My::Builder',
     code => q{
-	sub ACTION_dist{
+	sub ACTION_dist {
 	    my $self = shift;
 	    $self->do_system('svk log -v | gnuify-changelog.pl > Changes');
 	    $self->SUPER::ACTION_dist();

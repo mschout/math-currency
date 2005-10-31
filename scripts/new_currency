@@ -1,25 +1,27 @@
 #!/usr/bin/perl -w
 use Getopt::Std;
-use vars qw( $opt_h );
-getopts('h');
+use vars qw( $opt_h $opt_f);
+getopts('hf');
 
 usage() if $opt_h;
 
-my $locale = shift;
+my $lang = shift;
 
-if ($locale) {
+if ($lang) {
     eval '
 	use POSIX qw( locale_h );
-	my $locale = setlocale( LC_ALL, "$locale" );
+	my $lang = setlocale( LC_ALL, "$lang" );
     ';
     die "Cannot use this locale: $@" if $@;
 }
+else {
+    $lang = $ENV{'LANG'};
+}
 
 eval 'use Math::Currency 0.40';
-if ( $@ and -d "./lib") { # not already installed
-    push @INC, "./lib";   # and in the top level build directory
-    eval 'use Math::Currency 0.40';
-    die "Cannot load Math::Currency: $@" if $@;
+if ( $@ ) { # not already installed
+    die "Math::Currency 0.40 required to create new currencies\n" .
+    "Please install a current Math::Currency before proceeding\n";
 }
 
 my $format = {};
@@ -34,9 +36,10 @@ package Math::Currency::$localename;
 
 use Exporter;
 use Math::Currency qw(\$LC_MONETARY \$FORMAT);
-use vars qw(\$VERSION \@ISA);
+use vars qw(\$VERSION \@ISA \$LANG);
 
-\$VERSION = 0.01;
+\$VERSION = $Math::Currency::VERSION;
+\$LANG  = '$lang';
 \@ISA     = qw(Exporter Math::Currency);
 
 \$LC_MONETARY->{$localename} = {
@@ -60,7 +63,9 @@ $localesub .= "};\n\n1;\n";
 
 my $filename = "lib/Math/Currency/$localename.pm";
 
-die "The $localename locale has already been generated" if -f $filename;
+die "The $localename locale has already been generated" 
+  if not $opt_f and -f $filename;
+
 print STDOUT "Outputting subclass for $localename\n";
 
 open LOCALE, ">", $filename
@@ -74,7 +79,7 @@ sub usage {
     print STDOUT <<EOL;
 USAGE:
 
-    scripts/new_currency [locale]
+    perl scripts/new_currency -f [locale]
 
     Create a new currency format module.  If the locale is not specified;
     attempt to use the current locale settings.  Otherwise, load the
@@ -87,7 +92,7 @@ USAGE:
 
     so the script should be run from the base of the Math::Currency build
     tree.  If the requested locale format file already exists, the
-    program will stop with an error.
+    program will stop with an error unless you also include the '-f' option.
 
     Once you have built all of the additional locale subclasses, you can 
     rerun `./Build install` and the additional files will be added to your

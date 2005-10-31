@@ -38,28 +38,27 @@ use POSIX qw(locale_h);
   Money
 );
 
-$VERSION = '0.40';    # switch to Subversion
-$VERSION = eval $VERSION; # if only I was using version.pm
+$VERSION = 0.41;
 
 $PACKAGE = 'Math::Currency';
 
 $LC_MONETARY = {
     USD => {
-        INT_CURR_SYMBOL   => 'USD ',
-        CURRENCY_SYMBOL   => '$',
-        MON_DECIMAL_POINT => '.',
-        MON_THOUSANDS_SEP => ',',
-        MON_GROUPING      => '3',
-        POSITIVE_SIGN     => '',
-        NEGATIVE_SIGN     => '-',
-        INT_FRAC_DIGITS   => '2',
-        FRAC_DIGITS       => '2',
-        P_CS_PRECEDES     => '1',
-        P_SEP_BY_SPACE    => '0',
-        N_CS_PRECEDES     => '1',
-        N_SEP_BY_SPACE    => '0',
-        P_SIGN_POSN       => '1',
-        N_SIGN_POSN       => '1',
+	INT_CURR_SYMBOL	=>	'USD ',
+	CURRENCY_SYMBOL	=>	'$',
+	MON_DECIMAL_POINT	=>	'.',
+	MON_THOUSANDS_SEP	=>	',',
+	MON_GROUPING	=>	'3',
+	POSITIVE_SIGN	=>	'',
+	NEGATIVE_SIGN	=>	'-',
+	INT_FRAC_DIGITS	=>	'2',
+	FRAC_DIGITS	=>	'2',
+	P_CS_PRECEDES	=>	'1',
+	P_SEP_BY_SPACE	=>	'0',
+	N_CS_PRECEDES	=>	'1',
+	N_SEP_BY_SPACE	=>	'0',
+	P_SIGN_POSN	=>	'1',
+	N_SIGN_POSN	=>	'1',
     },
 };
 
@@ -88,13 +87,14 @@ sub new                    #05/10/99 3:13:PM
 
     my $value = shift || 0;
 
+    $value =~ tr/-()0-9.//cd;                #strip any formatting characters
+    $value = "-$value" if $value =~ s/(^\()|(\)$)//g;    # handle parens
+
     if ( (caller)[0] =~ /Math\::BigInt/ )    # only when called from objectify()
     {
         return Math::BigFloat->new($value);
     }
 
-    $value =~ tr/-()0-9.//cd;                #strip any formatting characters
-    $value = "-$value" if $value =~ s/(^\()|(\)$)//g;    # handle parens
     my $self;
     my $currency = shift;
     my $format;

@@ -3,9 +3,10 @@ package Math::Currency::GBP;
 
 use Exporter;
 use Math::Currency qw($LC_MONETARY $FORMAT);
-use vars qw($VERSION @ISA);
+use vars qw($VERSION @ISA $LANG);
 
-$VERSION = 0.01;
+$VERSION = 0.41;
+$LANG  = 'en_GB';
 @ISA     = qw(Exporter Math::Currency);
 
 $LC_MONETARY->{GBP} = {

@@ -11,6 +11,11 @@ the locale formats are now implemented as subclasses, with a script
 available for generating site specific subclasses for installation.  Please
 see the POD for more details.
 
+The module Math::Currency::Euro has been removed from the distribution as
+of 0.41, due to there being no one standard formatting.  Please generate
+your own Euro.pm module based on your own national $LANG setting using the
+new_currency script.
+
 This release has also been converted to use Module::Build, so to install, 
 do the following (as non-root):
 
@@ -20,7 +25,7 @@ do the following (as non-root):
 
 You can alternately run
 
-	./Build test TEST_VERBOSE=1
+	./Build test verbose=1
 
 to see the actual tests being run, as well as some example outputs.
 

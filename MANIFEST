@@ -1,7 +1,6 @@
 Build.PL
 Changes
 lib/Math/Currency.pm
-lib/Math/Currency/EUR.pm
 lib/Math/Currency/GBP.pm
 lib/Math/Currency/JPY.pm
 LICENSE

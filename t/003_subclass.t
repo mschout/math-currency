@@ -1,17 +1,17 @@
 use Test::More tests => 7;
 
-use Math::Currency::EUR;
-use_ok( Math::Currency::EUR );
+use Math::Currency::JPY;
+use_ok( Math::Currency::JPY );
 
-my $object = Math::Currency::EUR->new("1.02");
+my $object = Math::Currency::JPY->new("102");
 
 isa_ok ($object, 'Math::Currency');
-isa_ok ($object, 'Math::Currency::EUR');
-is ( $object, 'д1,02', 'Extended ASCII currency marker');
+isa_ok ($object, 'Math::Currency::JPY');
+is ( $object, 'бя102', 'Extended ASCII currency marker');
 $Math::Currency::use_int = 1;
-is ( $object, 'EUR 1,02', 'ISO currency marker');
+is ( $object, 'JPY 102', 'ISO currency marker');
 
-my $dollars = Math::Currency::EUR->new("1.02", 'USD'); #weird but legal
+my $dollars = Math::Currency::JPY->new("1.02", 'USD'); #weird but legal
 is ( $dollars, 'USD 1.02', 'Individual currency object');
 
 $dollars = Math::Currency->new("12.34"); # default to dollars
