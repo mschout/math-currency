@@ -4,6 +4,7 @@ lib/Math/Currency.pm
 lib/Math/Currency/GBP.pm
 lib/Math/Currency/JPY.pm
 LICENSE
+Makefile.PL
 MANIFEST
 META.yml
 README

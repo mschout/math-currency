@@ -38,7 +38,7 @@ use POSIX qw(locale_h);
   Money
 );
 
-$VERSION = 0.41;
+$VERSION = 0.42;
 
 $PACKAGE = 'Math::Currency';
 
@@ -261,6 +261,23 @@ sub format    #05/17/99 1:58:PM
     }
     return $$source;
 }    ##format
+
+sub as_float 
+{
+    my $self = shift;
+    my $string = $self->SUPER::bstr();
+    return $string;
+}
+
+
+sub as_int 
+{
+    my $self = shift;
+    return Math::BigInt->new($self->as_float 
+    	* 10**$self->format()->{FRAC_DIGITS}
+    )->bstr;
+}
+    
 
 ############################################################################
 sub localize    #08/17/02 7:58:PM
@@ -600,6 +617,33 @@ parameters:
 
 (the negative variants are similar).
 
+=head2 Additional Object Methods
+
+There are times when you would like to take a Math::Currency object and use
+it with some other module or external agent which doesn't understand the
+currency formatting.  
+
+=over 4
+
+=item $m->as_float - bare floating point notation without currency formatting
+
+When storing the value into a database, you often need a string which
+corresponds to the value of the currency as a floating point number, but
+without the special currency formatting.  That is what this object method
+produces.  Be sure and use e.g. DECIMAL(10,2) in MySQL, to ensure that you
+don't have any floating point rounding issues going from/to the database.
+
+=item $m->as_int - bare integer number of "minimum value" 
+
+Some US credit card gateways require all transactions to be expressed in
+pennies (because their software isn't running Math::Currency!).  This
+object method returns an integer value that corresponds to the currency
+value multiplied by 10 to the power of the number of decimal places of
+precision.  Essentially, this expresses the currency amount in the smallest
+discrete value allowed with that currency, so for currency expressed in 
+dollars, this method returns the same value in pennies.
+
+=back
 
 =head1 AUTHOR
 

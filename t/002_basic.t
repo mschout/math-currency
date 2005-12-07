@@ -7,7 +7,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-use Test::More tests => 47;
+use Test::More tests => 49;
 use Math::Currency qw(Money $LC_MONETARY $FORMAT);
 use_ok( Math::Currency );
 
@@ -98,12 +98,6 @@ SKIP: {
 	is ( $dollars, '$20.01', "POSIX format reset properly");
 }
 
-print "# Formatting examples:\n";
-print "# In Pounds Sterling:	$pounds\n";
-print "# In negative Dollars:	$newdollars\n";
-
-$yen = Math::Currency->new( 23459.95, 'JPY');
-$Math::Currency::use_int = 1;
-
-print "# In yen: 	$yen\n";
-
+# new features suggested by Cory Watson <cwatson@magazines.com>
+is ($dollars->as_float, "20.01", 'display without formatting');
+is ($dollars->as_int, "2001", 'displa integer number of minimum units');
