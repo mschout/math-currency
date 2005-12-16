@@ -7,7 +7,7 @@
 # Change 1..1 below to 1..last_test_to_print .
 # (It may become useful if the test is moved to ./t subdirectory.)
 
-use Test::More tests => 49;
+use Test::More tests => 51;
 use Math::Currency qw(Money $LC_MONETARY $FORMAT);
 use_ok( Math::Currency );
 
@@ -101,3 +101,13 @@ SKIP: {
 # new features suggested by Cory Watson <cwatson@magazines.com>
 is ($dollars->as_float, "20.01", 'display without formatting');
 is ($dollars->as_int, "2001", 'displa integer number of minimum units');
+
+# override Math::BigFloat::copy so that custom formatting sticks
+# suggested by Brian Phillips <brianp@holmescorp.com>
+$mc = Math::Currency->new(2);
+$mc->format('CURRENCY_SYMBOL',' Bucks');
+$mc->format('P_CS_PRECEDES',0);
+is("$mc","2.00 Bucks","Custom formatting good");
+is( $mc * 1, "2.00 Bucks", "Keeps custom formatting");
+
+

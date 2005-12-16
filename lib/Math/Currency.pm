@@ -38,7 +38,7 @@ use POSIX qw(locale_h);
   Money
 );
 
-$VERSION = 0.42;
+$VERSION = 0.43;
 
 $PACKAGE = 'Math::Currency';
 
@@ -269,6 +269,24 @@ sub as_float
     return $string;
 }
 
+sub copy {
+    my $self = shift;
+
+    # grab the builtin formatting
+    my $myformat = ( defined $self->{format} ? $self->{format} : undef );
+
+    # let Math::BigFloat do it's thing
+    my $new = $self->SUPER::copy(@_);
+
+    if( $myformat ) {
+
+        # make sure we keep the original formatting
+        $new->format($myformat);
+    }
+
+    # done...
+    return $new;
+}
 
 sub as_int 
 {

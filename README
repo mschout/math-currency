@@ -4,7 +4,8 @@ This module uses Math::BigFloat for all math operations.  It permits
 currency calculations without concern with floating point notation and
 rounding issues.
 
-This is a minor release to add some e-commerce friendly object methods.
+This is a minor release to make sure custom object formatting is preserved
+when the object is implicitely copied.
 
 To install, do the following (as non-root):
 
