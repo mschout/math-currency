@@ -1,7 +1,6 @@
 use Test::More tests => 7;
 
-use Math::Currency::JPY;
-use_ok( Math::Currency::JPY );
+BEGIN { use_ok( Math::Currency::JPY ); }
 
 my $object = Math::Currency::JPY->new("102");
 

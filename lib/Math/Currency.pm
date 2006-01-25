@@ -1,4 +1,4 @@
-#!/usr2/local/bin/perl -w
+#!/usr/bin/perl -w
 #
 # PROGRAM:	Math::Currency.pm	# - 04/26/00 9:10:AM
 # PURPOSE:	Perform currency calculations without floating point
@@ -38,27 +38,27 @@ use POSIX qw(locale_h);
   Money
 );
 
-$VERSION = 0.43;
+$VERSION = 0.44;
 
-$PACKAGE = 'Math::Currency';
+$PACKAGE = __PACKAGE__;
 
 $LC_MONETARY = {
     USD => {
-	INT_CURR_SYMBOL	=>	'USD ',
-	CURRENCY_SYMBOL	=>	'$',
-	MON_DECIMAL_POINT	=>	'.',
-	MON_THOUSANDS_SEP	=>	',',
-	MON_GROUPING	=>	'3',
-	POSITIVE_SIGN	=>	'',
-	NEGATIVE_SIGN	=>	'-',
-	INT_FRAC_DIGITS	=>	'2',
-	FRAC_DIGITS	=>	'2',
-	P_CS_PRECEDES	=>	'1',
-	P_SEP_BY_SPACE	=>	'0',
-	N_CS_PRECEDES	=>	'1',
-	N_SEP_BY_SPACE	=>	'0',
-	P_SIGN_POSN	=>	'1',
-	N_SIGN_POSN	=>	'1',
+        INT_CURR_SYMBOL   => 'USD ',
+        CURRENCY_SYMBOL   => '$',
+        MON_DECIMAL_POINT => '.',
+        MON_THOUSANDS_SEP => ',',
+        MON_GROUPING      => '3',
+        POSITIVE_SIGN     => '',
+        NEGATIVE_SIGN     => '-',
+        INT_FRAC_DIGITS   => '2',
+        FRAC_DIGITS       => '2',
+        P_CS_PRECEDES     => '1',
+        P_SEP_BY_SPACE    => '0',
+        N_CS_PRECEDES     => '1',
+        N_SEP_BY_SPACE    => '0',
+        P_SIGN_POSN       => '1',
+        N_SIGN_POSN       => '1',
     },
 };
 
@@ -68,16 +68,16 @@ unless ( localize() )    # no locale information available
 }
 
 # Set class constants
-$round_mode = 'even';      # Banker's rounding obviously
+$round_mode = 'even';    # Banker's rounding obviously
 $accuracy   = undef;
 $precision = $FORMAT->{FRAC_DIGITS} > 0 ? -$FORMAT->{FRAC_DIGITS} : 0;
 $div_scale = 40;
 $use_int   = 0;
-$always_init = 0;          # should the localize() happen every time?
+$always_init = 0;        # should the localize() happen every time?
 
 # Preloaded methods go here.
 ############################################################################
-sub new                    #05/10/99 3:13:PM
+sub new                  #05/10/99 3:13:PM
 ############################################################################
 
 {
@@ -87,7 +87,7 @@ sub new                    #05/10/99 3:13:PM
 
     my $value = shift || 0;
 
-    $value =~ tr/-()0-9.//cd;                #strip any formatting characters
+    $value =~ tr/-()0-9.//cd;    #strip any formatting characters
     $value = "-$value" if $value =~ s/(^\()|(\)$)//g;    # handle parens
 
     if ( (caller)[0] =~ /Math\::BigInt/ )    # only when called from objectify()
@@ -99,8 +99,8 @@ sub new                    #05/10/99 3:13:PM
     my $currency = shift;
     my $format;
 
-    if ( not defined $currency and $class =~ /$PACKAGE\:\:([A-Z]{3})/ )
-    {
+    if ( not defined $currency and $class =~ /$PACKAGE\:\:([A-Z]{3})/ ) {
+
         # must be one of our subclasses
         $currency = $1;
     }
@@ -115,7 +115,8 @@ sub new                    #05/10/99 3:13:PM
     }
 
     if ($format) {
-        $self = Math::BigFloat->new( $value, undef, -$format->{FRAC_DIGITS} );
+        $self =
+          Math::BigFloat->new( $value, undef, -( $format->{FRAC_DIGITS} + 2 ) );
         bless $self, $class;
         $self->format($format);
     }
@@ -123,12 +124,14 @@ sub new                    #05/10/99 3:13:PM
         and defined $parent->{format} ) # if we are cloning an existing instance
     {
         $self =
-          Math::BigFloat->new( $value, undef, -$parent->format->{FRAC_DIGITS} );
+          Math::BigFloat->new( $value, undef,
+            -( $parent->format->{FRAC_DIGITS} + 2 ) );
         bless $self, $class;
         $self->format( $parent->format );
     }
     else {
-        $self = Math::BigFloat->new( $value, undef, -$FORMAT->{FRAC_DIGITS} );
+        $self =
+          Math::BigFloat->new( $value, undef, -( $FORMAT->{FRAC_DIGITS} + 2 ) );
         bless $self, $class;
     }
     return $self;
@@ -148,10 +151,10 @@ sub bstr     #05/10/99 3:52:PM
 
 {
     my $self     = shift;
-    my $value    = Math::BigFloat::bstr($self);
+    my $myformat = $self->format();
+    my $value    = $self->as_float();
     my $neg      = ( $value =~ tr/-//d );
     my $dp       = index( $value, "." );
-    my $myformat = $self->format();
     my $sign     = $neg
       ? $myformat->{NEGATIVE_SIGN}
       : $myformat->{POSITIVE_SIGN};
@@ -222,7 +225,7 @@ sub format    #05/17/99 1:58:PM
     my $key   = shift;    # do they want to display or set?
     my $value = shift;    # did they supply a value?
     localize() if $always_init;    # always reset the global format?
-    my $source = \$FORMAT;           # default format rules
+    my $source = \$FORMAT;         # default format rules
 
     if ( ref($self) ) {
         if ( defined $self->{format} ) {
@@ -234,7 +237,7 @@ sub format    #05/17/99 1:58:PM
                 $source = \$self->{format};
             }
         }
-        elsif ( defined $key )       # get/set a parameter
+        elsif ( defined $key )     # get/set a parameter
         {
             if ( defined $value
                 or ref($key) eq "HASH" )    # have to copy global format
@@ -262,10 +265,10 @@ sub format    #05/17/99 1:58:PM
     return $$source;
 }    ##format
 
-sub as_float 
-{
-    my $self = shift;
-    my $string = $self->SUPER::bstr();
+sub as_float {
+    my $self   = shift;
+    my $format = $self->format;
+    my $string = $self->copy->bfround( -$format->{FRAC_DIGITS} )->SUPER::bstr();
     return $string;
 }
 
@@ -278,7 +281,7 @@ sub copy {
     # let Math::BigFloat do it's thing
     my $new = $self->SUPER::copy(@_);
 
-    if( $myformat ) {
+    if ($myformat) {
 
         # make sure we keep the original formatting
         $new->format($myformat);
@@ -288,24 +291,35 @@ sub copy {
     return $new;
 }
 
-sub as_int 
-{
+sub as_int {
     my $self = shift;
-    return Math::BigInt->new($self->as_float 
-    	* 10**$self->format()->{FRAC_DIGITS}
-    )->bstr;
+    return Math::BigInt->new(
+        $self->as_float * 10**$self->format()->{FRAC_DIGITS} )->bstr;
 }
-    
+
+# we override the default here because we only want to compare the precision of
+# the currency we're dealing with, not the precision of the underlying object
+sub bcmp {
+    my $class = shift;
+
+    # make sure we're dealing with two Math::Currency objects
+    my ( $x, $y ) =
+      map { ref $_ ne $class ? $class->new($_) : $_ } @_[ 0, 1 ];
+    return $x->as_float <=> $y->as_float;
+}
 
 ############################################################################
 sub localize    #08/17/02 7:58:PM
 ############################################################################
 
 {
-    my $self = shift;
+    my $self   = shift;
     my $format = shift || \$FORMAT;
 
-    my $localeconv = POSIX::localeconv();
+    my $localeconv = POSIX::localeconv(); 
+
+    # so you can test to see if locale was effective
+    return 0 if ! exists $localeconv->{'currency_symbol'};
 
     $$format = {
         INT_CURR_SYMBOL   => $localeconv->{'int_curr_symbol'}   || '',
@@ -332,31 +346,43 @@ sub localize    #08/17/02 7:58:PM
         N_SIGN_POSN     => $localeconv->{'n_sign_posn'}     || 0,
     };
 
-    return
-      exists $localeconv->{'currency_symbol'}
-      ? 1
-      : 0;    # so you can test to see if locale was effective
+    return 1;
 }
 
 ############################################################################
-sub unknown_currency #02/03/05 4:37am
+sub unknown_currency    #02/03/05 4:37am
 ############################################################################
 
 {
     my ($currency) = @_;
     open LOCALES, "locale -a |";
-    while ( <LOCALES> ) {
+    while (<LOCALES>) {
         chomp;
-        setlocale(LC_ALL,$_);
+        setlocale( LC_ALL, $_ );
         my $localeconv = POSIX::localeconv();
-        if ( defined $localeconv->{'int_curr_symbol'} 
-             and $localeconv->{'int_curr_symbol'} =~ /$currency/ ) {
+        if ( defined $localeconv->{'int_curr_symbol'}
+            and $localeconv->{'int_curr_symbol'} =~ /$currency/ )
+        {
             my $format = \$LC_MONETARY->{$currency};
             Math::Currency->localize($format);
             last;
         }
     }
     close LOCALES;
+}
+
+# additional methods needed to get/set package globals
+
+sub always_init {
+    my ($class) = shift;
+    $always_init = shift if @_;
+    return $always_init;
+}
+
+sub use_int {
+    my ($class) = shift;
+    $use_int = shift if @_;
+    return $use_int;
 }
 
 # Autoload methods go after =cut, and are processed by the autosplit program.
@@ -387,6 +413,13 @@ floating point math.  Rounding errors on addition and subtraction are not
 allowed and division/multiplication should never create more accuracy than the
 original values.  All currency values should round to the closest cent or
 whatever the local equivalent should happen to be.
+
+However, repeated mathematical operations on currency values can lead to
+inaccurate results, if rounding is performed at each intermediate step.
+In order to preserve appropriate accuracy, the Math::Currency values are
+stored with an additional two places of accuracy internally and only
+rounded to the "correct" precision when the value is displayed (either by
+the default stringification or through the use of L<as_float> or L<as_int>).
 
 All common mathematical operations are overloaded, so once you initialize a
 currency variable, you can treat it like any number and the module will do

@@ -1,3 +1,50 @@
+2006-01-25  John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	  M  /Math-Currency/trunk/MANIFEST
+	  M  /Math-Currency/trunk/lib/Math/Currency.pm
+
+	Final changes before CPAN release.
+
+	* MANIFEST
+	    Forgot to add new test here.
+
+	* lib/Math/Currency.pm
+	    Test localeconv() early and bail immediately if not supported.
+	    Bad markup in POD.
+
+2006-01-24  John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	  M  /Math-Currency/trunk/README
+	  M  /Math-Currency/trunk/lib/Math/Currency.pm
+	  M  /Math-Currency/trunk/lib/Math/Currency/GBP.pm
+	  M  /Math-Currency/trunk/lib/Math/Currency/JPY.pm
+	  M  /Math-Currency/trunk/t/002_basic.t
+	  M  /Math-Currency/trunk/t/003_subclass.t
+	  A  /Math-Currency/trunk/t/005_rounding.t
+
+	Prep for new release to CPAN.
+
+	* README
+	    Note the changes for this release.
+
+	* lib/Math/Currency.pm
+	    Add additional two digits of precision (hidden) to prevent loss of
+	    accuracy on multiple math operations.
+	    Suggested by Brian Phillips <brianp@holmescorp.com>
+
+	* lib/Math/Currency/JPY.pm
+	  lib/Math/Currency/GBP.pm
+	    Run code through perltidy to try and make things consistent.
+
+	* t/002_basic.t
+	    New empty subclass test.
+
+	* t/003_subclass.t
+	    Loading class has to happen in BEGIN{} to be valid test.
+
+	* t/005_rounding.t
+	    New tests for extended precision feature.
+
 2005-12-16  John Peacock <jpeacock@cpan.org>
 	Changed paths:
 	  M  /Math-Currency/trunk/README
