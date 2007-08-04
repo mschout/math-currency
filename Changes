@@ -1,3 +1,17 @@
+2007-08-04  John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	  M  /Math-Currency/trunk/MANIFEST
+
+	Forgot to add new testfile to the MANIFEST
+
+2007-08-04  John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	  M  /Math-Currency/trunk/lib/Math/Currency.pm
+	  M  /Math-Currency/trunk/t/006_defaults.t (from /Math-Currency/trunk/t/003_subclass.t:496)
+
+	Bugfix to correctly handle changing default currency as a class method.
+	New tests for changing default currency as class method.
+
 2006-01-25  John Peacock <jpeacock@cpan.org>
 	Changed paths:
 	  M  /Math-Currency/trunk/MANIFEST

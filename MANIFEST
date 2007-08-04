@@ -14,3 +14,4 @@ t/002_basic.t
 t/003_subclass.t
 t/004_localize.t
 t/005_rounding.t
+t/006_defaults.t

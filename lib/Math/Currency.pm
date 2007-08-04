@@ -38,7 +38,7 @@ use POSIX qw(locale_h);
   Money
 );
 
-$VERSION = 0.44;
+$VERSION = 0.45;
 
 $PACKAGE = __PACKAGE__;
 
@@ -249,6 +249,17 @@ sub format    #05/17/99 1:58:PM
             }
         }
     }
+    else { # called as class method to set the default currency
+	if ( defined $key && not exists $FORMAT->{$key} ) {
+	    unless ( defined $LC_MONETARY->{$key} ) {
+		eval "require Math::Currency::$key";
+		unknown_currency($key) if $@;
+	    }
+	    $FORMAT = $LC_MONETARY->{$key};
+	    return $FORMAT;
+	}
+    }
+
 
     if ( defined $key )                     # otherwise just return
     {
@@ -695,6 +706,12 @@ discrete value allowed with that currency, so for currency expressed in
 dollars, this method returns the same value in pennies.
 
 =back
+
+=head1 BUGS
+
+Please report any bugs or feature requests to
+C<bug-Math-Currency@rt.cpan.org>, or through the web interface at
+L<http://rt.cpan.org>.
 
 =head1 AUTHOR
 
