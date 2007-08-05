@@ -2,6 +2,9 @@ use Test::More tests => 7;
 
 BEGIN { use_ok( Math::Currency::JPY ); }
 
+# For subsequent testing, we need to make sure that format is default US
+Math::Currency->format('USD');
+
 my $object = Math::Currency::JPY->new("102");
 
 isa_ok ($object, 'Math::Currency');

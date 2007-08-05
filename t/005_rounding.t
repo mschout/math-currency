@@ -2,6 +2,9 @@ use Test::More qw(no_plan);
 
 BEGIN { use_ok('Math::Currency'); }
 
+# For subsequent testing, we need to make sure that format is default US
+Math::Currency->format('USD');
+
 # testing the extended precision code
 # suggested by Brian Phillips <brianp@holmescorp.com>
 {

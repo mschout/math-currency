@@ -1,3 +1,13 @@
+2007-08-05  John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	  M  /Math-Currency/trunk/lib/Math/Currency.pm
+	  M  /Math-Currency/trunk/t/002_basic.t
+	  M  /Math-Currency/trunk/t/003_subclass.t
+	  M  /Math-Currency/trunk/t/005_rounding.t
+	  M  /Math-Currency/trunk/t/006_defaults.t
+
+	Stupid locale() tests didn't work for non-US locale
+
 2007-08-04  John Peacock <jpeacock@cpan.org>
 	Changed paths:
 	  M  /Math-Currency/trunk/MANIFEST

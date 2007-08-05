@@ -52,7 +52,7 @@ sub run_tests {
     }
 
 # For subsequent testing, we need to make sure that format is default US
-    $CLASS->format(USD);
+    $CLASS->format('USD');
 
     ok ( $dollars = $CLASS->new('$18123'), "class new" );
     ok ( $dollars = $dollars->new('$18123'), "object new" );

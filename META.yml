@@ -1,6 +1,6 @@
 ---
 name: Math-Currency
-version: 0.45
+version: 0.4501
 author:
   - 'John Peacock <jpeacock@cpan.org>'
 abstract: Exact Currency Math with Formatting and Rounding
@@ -12,7 +12,7 @@ requires:
 provides:
   Math::Currency:
     file: lib/Math/Currency.pm
-    version: 0.45
+    version: 0.4501
   Math::Currency::GBP:
     file: lib/Math/Currency/GBP.pm
     version: 0.41
