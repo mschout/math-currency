@@ -1,3 +1,17 @@
+2007-08-06  John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	  M  /Math-Currency/trunk/t/002_basic.t
+
+	Actually tests cleanly both with and without en_US
+
+2007-08-06  John Peacock <jpeacock@cpan.org>
+	Changed paths:
+	  M  /Math-Currency/trunk/lib/Math/Currency.pm
+	  M  /Math-Currency/trunk/t/002_basic.t
+
+	Deal with problems where en_US isn't installed at all.
+	Reported by David Cantrell <david@cantrell.org.uk>
+
 2007-08-05  John Peacock <jpeacock@cpan.org>
 	Changed paths:
 	  M  /Math-Currency/trunk/lib/Math/Currency.pm

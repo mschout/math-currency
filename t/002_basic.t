@@ -22,7 +22,7 @@ $VERSION = 0.001;
 $PACKAGE = __PACKAGE__;
 
 # Set class constants based on parent
-$FORMAT = Math::Currency->format();
+$FORMAT = Math::Currency->format('USD');
 $round_mode = Math::Currency->round_mode();
 $accuracy   = Math::Currency->accuracy();
 $precision = Math::Currency->precision();
@@ -119,9 +119,12 @@ sub run_tests {
 	    skip ("No locale support", 3) unless $CLASS->localize();
 	    pass ( "Re-initialized locale with en_GB" );
 	    is ( $FORMAT->{INT_CURR_SYMBOL}, "GBP ", "POSIX format set properly");
+	    $locale = setlocale(LC_ALL,"en_US");
+	    skip ("No en_US locale installed", 1) 
+	    	unless setlocale(LC_ALL) eq "en_US";
 	    $CLASS->always_init(1);
-	    setlocale(LC_ALL,"en_US");
 	    is ( $dollars, '$20.01', "POSIX format reset properly");
+	    $CLASS->always_init(0);
     }
 
 # new features suggested by Cory Watson <cwatson@magazines.com>
