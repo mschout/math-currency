@@ -1,45 +1,34 @@
+2007-09-23  John Peacock <jpeacock@cpan.org>
+
+	as_int() could have floating point errors.  See:
+
+		http://rt.cpan.org/Public/Bug/Display.html?id=29210
+
+	for details.  This code is faster too!  Patch by <rybskej @ yahoo.com>
+
 2007-08-06  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/t/002_basic.t
 
 	Actually tests cleanly both with and without en_US
 
 2007-08-06  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/t/002_basic.t
 
 	Deal with problems where en_US isn't installed at all.
 	Reported by David Cantrell <david@cantrell.org.uk>
 
 2007-08-05  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/t/002_basic.t
-	  M  /Math-Currency/trunk/t/003_subclass.t
-	  M  /Math-Currency/trunk/t/005_rounding.t
-	  M  /Math-Currency/trunk/t/006_defaults.t
 
 	Stupid locale() tests didn't work for non-US locale
 
 2007-08-04  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/MANIFEST
 
 	Forgot to add new testfile to the MANIFEST
 
 2007-08-04  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/t/006_defaults.t (from /Math-Currency/trunk/t/003_subclass.t:496)
 
 	Bugfix to correctly handle changing default currency as a class method.
 	New tests for changing default currency as class method.
 
 2006-01-25  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/MANIFEST
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
 
 	Final changes before CPAN release.
 
@@ -51,14 +40,6 @@
 	    Bad markup in POD.
 
 2006-01-24  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/README
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/lib/Math/Currency/GBP.pm
-	  M  /Math-Currency/trunk/lib/Math/Currency/JPY.pm
-	  M  /Math-Currency/trunk/t/002_basic.t
-	  M  /Math-Currency/trunk/t/003_subclass.t
-	  A  /Math-Currency/trunk/t/005_rounding.t
 
 	Prep for new release to CPAN.
 
@@ -84,10 +65,6 @@
 	    New tests for extended precision feature.
 
 2005-12-16  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/README
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/t/002_basic.t
 
 	* lib/Math/Currency.pm
 	    Preserve object formatting when making implicit copy,
@@ -101,9 +78,6 @@
 	    Update this the first time for a change.
 
 2005-12-07  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/MANIFEST
-	  A  /Math-Currency/trunk/Makefile.PL
 
 	Must remember to patch Module::Release to handle bare Build.PL.
 
@@ -112,10 +86,6 @@
 	    Add compatibility Makefile.PL so that `release` will work.
 
 2005-12-07  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/README
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/t/002_basic.t
 
 	Add two object methods suggested by Cory Watson
 	<cwatson@magazines.com>.
@@ -131,15 +101,6 @@
 	   No new features allowed without corresponding tests! :)
 
 2005-10-29  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Build.PL
-	  M  /Math-Currency/trunk/README
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/lib/Math/Currency/GBP.pm
-	  M  /Math-Currency/trunk/lib/Math/Currency/JPY.pm
-	  M  /Math-Currency/trunk/scripts/new_currency
-	  M  /Math-Currency/trunk/t/002_basic.t
-	  M  /Math-Currency/trunk/t/003_subclass.t
 
 	*   lib/Math/Currency.pm
 	      Correct handle case when adding formatted string to a M::C
@@ -164,9 +125,6 @@
 	      Minor formatting change
 
 2005-10-27  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/MANIFEST
-	  D  /Math-Currency/trunk/lib/Math/Currency/EUR.pm
 
 	*   lib/Math/Currency/EUR.pm
 	      After looking at all of the possible EURO supported locales, with
@@ -174,8 +132,6 @@
 	      the distro completely.
 
 2005-10-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/lib/Math/Currency/EUR.pm
 
 	*   lib/Math/Currency/EUR.pm
 	    There seems to be some vast disagreement about what the correct
@@ -183,11 +139,6 @@
 	    most of the locales in SuSE 10.0.  YMMV.
 
 2005-02-12  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Build.PL
-	  M  /Math-Currency/trunk/README
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/t/002_basic.t
 
 	*   lib/Math/Currency.pm
 	    Improve documentation of subclasses and automatic format generation
@@ -202,8 +153,6 @@
 	    Rewrite to emphasize what this release includes
 
 2005-02-06  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
 
 	*   lib/Math/Currency.pm
 	    Add support for unknown currencies
@@ -211,13 +160,6 @@
 	    Document currency format subclasses and custom currencies
 
 2005-02-06  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/lib/Math/Currency/EUR.pm
-	  M  /Math-Currency/trunk/lib/Math/Currency/GBP.pm
-	  M  /Math-Currency/trunk/lib/Math/Currency/JPY.pm
-	  M  /Math-Currency/trunk/scripts/new_currency
-	  M  /Math-Currency/trunk/t/002_basic.t
-	  M  /Math-Currency/trunk/t/004_localize.t
 
 	*   lib/Math/Currency/EUR.pm
 	    lib/Math/Currency/JPY.pm
@@ -237,39 +179,19 @@
 	    Test subclass vs. locale-loaded format
 
 2005-01-18  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  M  /Math-Currency/trunk/scripts/new_currency
 
 	Working new_currency script
 	Updated POD (but not implemented all fallback code yet)
 
 2005-01-16  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
 
 	Wrong $VERSION code for new release
 
 2005-01-16  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  D  /Math-Currency/trunk/Changes
-	  D  /Math-Currency/trunk/META.yml
 
 	Generated files don't belong in the repository
 
 2005-01-16  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/MANIFEST
-	  A  /Math-Currency/trunk/lib/Math/Currency
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm
-	  A  /Math-Currency/trunk/lib/Math/Currency/EUR.pm
-	  A  /Math-Currency/trunk/lib/Math/Currency/GBP.pm
-	  A  /Math-Currency/trunk/lib/Math/Currency/JPY.pm
-	  A  /Math-Currency/trunk/scripts
-	  A  /Math-Currency/trunk/scripts/new_currency
-	  M  /Math-Currency/trunk/t/002_basic.t
-	  A  /Math-Currency/trunk/t/003_subclass.t
-	  A  /Math-Currency/trunk/t/004_localize.t
 
 	Finish conversion to Module::Build
 	Split out ISO Locale/Currency formats into subclasses
@@ -277,253 +199,147 @@
 	Begin work on script to create custom subclasses
 
 2005-01-16  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  A  /Math-Currency/trunk/Build.PL
-	  M  /Math-Currency/trunk/Changes
-	  D  /Math-Currency/trunk/Currency.pm
-	  A  /Math-Currency/trunk/LICENSE
-	  M  /Math-Currency/trunk/MANIFEST
-	  M  /Math-Currency/trunk/META.yml
-	  D  /Math-Currency/trunk/Makefile.PL
-	  M  /Math-Currency/trunk/README
-	  A  /Math-Currency/trunk/lib
-	  A  /Math-Currency/trunk/lib/Math
-	  M  /Math-Currency/trunk/lib/Math/Currency.pm (from /Math-Currency/trunk/Currency.pm:369)
-	  A  /Math-Currency/trunk/t/001_load.t
-	  A  /Math-Currency/trunk/t/002_basic.t (from /Math-Currency/trunk/t/test.t:356)
-	  D  /Math-Currency/trunk/t/test.t
 
 	Convert to Module::Build
 	Hardcode the $VERSION
 	Change the new() to handle null $value
 
 2005-01-15  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
-	  M  /Math-Currency/trunk/MANIFEST
-	  A  /Math-Currency/trunk/META.yml
 
 	hard code $VERSION scalar and add META.yml
 
 2002-11-13  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/t/test.t
 
 	Skip locale tests if no locale support
 
 2002-11-13  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	Enhance initialize() to return success only locale support existing
 
 2002-11-13  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/t/test.t
 
 	Forgot to increment the number of tests
 
 2002-11-13  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
-	  M  /Math-Currency/trunk/Currency.pm
 
 	Protect the ord() by making sure there is a defined value to use first
 
 2002-08-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/README
 
 	Bring current with pm file
 
 2002-08-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
-	  M  /Math-Currency/trunk/Currency.pm
 
 	- Forgot to fix 5.8.0 tr// error
 
 2002-08-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/t/test.t
 
 	- New tests for locale global format initialization
 
 2002-08-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	- Add $always_init global parameter and test initialize() in format()
 	- Add POD discussion of quoting input
 
 2002-08-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
 
 	- Add $always_init global parameter and test initialize() in format()
 	- Add POD discussion of quoting input
 
 2002-08-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	- Rename monetary_locale() to initialize() and make module use it itself.
 	- Document in POD
 
 2002-08-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	- Add monetary_locale to reset global $FORMAT to new POSIX locale
 	- Reformat POD to look a little nicer
 
 2002-08-26  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	- Trailing decimal point for currency without fraction (Jacques Deguest)
 	- Added JPY to preset format
 
 2002-03-06  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
-	  M  /Math-Currency/trunk/Currency.pm
-	  M  /Math-Currency/trunk/MANIFEST
-	  M  /Math-Currency/trunk/Makefile.PL
-	  M  /Math-Currency/trunk/README
-	  M  /Math-Currency/trunk/t/test.t
 
 	Forgot to enforce precision on objects with only global format
 	Need to have ->new() called from M::BI::objectify use M::BF::new instead
 
 2002-02-12  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/t/test.t
 
 	Select sensible defaults for missing locale parameters
 
 2002-02-12  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
-	  M  /Math-Currency/trunk/Currency.pm
-	  M  /Math-Currency/trunk/Makefile.PL
 
 	Select sensible defaults for missing locale parameters
 
 2002-02-12  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
-	  M  /Math-Currency/trunk/Currency.pm
-	  M  /Math-Currency/trunk/MANIFEST
-	  M  /Math-Currency/trunk/Makefile.PL
-	  M  /Math-Currency/trunk/README
 
 	Rewrite docs
 	Release to CPAN
 
 2002-02-11  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	complete work on LC_MONETARY formatting
 
 2002-02-05  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
 
 	Handle parentheses around negative currency
 	Handle less than FRAC_DIGITS decimal places
 
 2002-02-05  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	Handle parentheses around negative currency
 	Handle less than FRAC_DIGITS decimal places
 
 2002-02-01  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	format() will now set/get and copy the global FORMAT as needed
 
 2002-02-01  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	- make the format() function much more clever
 
 2002-02-01  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	- Change public interface to use Locale LC_MONETARY codes
 	- Produce actual documentation for a change
 
 2002-01-30  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/README
 
 	Adjust tests to handle non-US locale
 
 2002-01-30  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
 
 	Adjust tests to handle non-US locale
 
 2002-01-30  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Currency.pm
 
 	New version (corrected tests)
 
 2002-01-30  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  A  /Math-Currency/trunk/t
-	  A  /Math-Currency/trunk/t/test.t
 
 	Moved to t/test.t so harness is used, hiding the diagnostic output
 
 2002-01-30  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  D  /Math-Currency/trunk/test.pl
 
 	Move to t/test.t so harness is used, hiding the diagnostic output
 
 2002-01-30  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/MANIFEST
-	  M  /Math-Currency/trunk/test.pl
 
 	Update tests to correctly succeed for non US locale settings
 
 2002-01-29  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  M  /Math-Currency/trunk/Changes
-	  M  /Math-Currency/trunk/Currency.pm
-	  M  /Math-Currency/trunk/MANIFEST
-	  M  /Math-Currency/trunk/Makefile.PL
-	  M  /Math-Currency/trunk/README
-	  M  /Math-Currency/trunk/test.pl
 
 	Rewrite to use Math::BigFloat >= 1.27
 	Change version to next major level
 
 2001-09-14  JPeacock
-	Changed paths:
-	  A  /Math-Currency/trunk/Changes
-	  A  /Math-Currency/trunk/Currency.pm
-	  A  /Math-Currency/trunk/MANIFEST
-	  A  /Math-Currency/trunk/Makefile.PL
-	  A  /Math-Currency/trunk/README
-	  A  /Math-Currency/trunk/test.pl
 
 	Initial revision
 
 2001-09-14  John Peacock <jpeacock@cpan.org>
-	Changed paths:
-	  A  /Math-Currency/trunk
 
 	New repository initialized by cvs2svn.
 

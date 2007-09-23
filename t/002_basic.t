@@ -129,7 +129,11 @@ sub run_tests {
 
 # new features suggested by Cory Watson <cwatson@magazines.com>
     is ($dollars->as_float, "20.01", 'display without formatting');
-    is ($dollars->as_int, "2001", 'displa integer number of minimum units');
+    is ($dollars->as_int, "2001", 'display integer number of minimum units');
+
+# RT #29210 failure and patch by <rybskej@yahoo.com>
+    $dollars = $CLASS->new('0.29');
+    is $dollars->as_int, "29", 'convert to integer without rounding failure';
 
 # override Math::BigFloat::copy so that custom formatting sticks
 # suggested by Brian Phillips <brianp@holmescorp.com>

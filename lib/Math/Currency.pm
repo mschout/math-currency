@@ -38,7 +38,7 @@ use POSIX qw(locale_h);
   Money
 );
 
-$VERSION = 0.4502;
+$VERSION = 0.46;
 
 $PACKAGE = __PACKAGE__;
 
@@ -304,8 +304,9 @@ sub copy {
 
 sub as_int {
     my $self = shift;
-    return Math::BigInt->new(
-        $self->as_float * 10**$self->format()->{FRAC_DIGITS} )->bstr;
+    (my $str = $self->as_float) =~ s/\.//o;
+    $str =~ s/^(\-?)0+/$1/o;
+    return $str eq '' ? '0' : $str;
 }
 
 # we override the default here because we only want to compare the precision of
