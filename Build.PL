@@ -6,7 +6,7 @@ my $class = Module::Build->subclass
     code => q{
 	sub ACTION_dist {
 	    my $self = shift;
-	    $self->do_system('svk log | gnuify-changelog.pl > Changes');
+	    $self->do_system('hg log --style changelog > Changes');
 	    $self->SUPER::ACTION_dist();
 	}
     },
@@ -16,7 +16,7 @@ my $m = $class->new(
     module_name     => 'Math::Currency',
     license         => 'perl',
     requires        => {
-	'Math::BigFloat' => '1.47',
+	'Math::BigFloat' => '1.60',
     },
 );
 $m->create_build_script;

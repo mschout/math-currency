@@ -1,8 +1,9 @@
 Build.PL
 Changes
 lib/Math/Currency.pm
-lib/Math/Currency/GBP.pm
-lib/Math/Currency/JPY.pm
+lib/Math/Currency/de_DE.pm
+lib/Math/Currency/en_GB.pm
+lib/Math/Currency/ja_JP.pm
 LICENSE
 Makefile.PL
 MANIFEST

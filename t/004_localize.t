@@ -32,7 +32,7 @@ SKIP: {
     skip ("No locale support", 16) 
     	unless $format->{INT_CURR_SYMBOL} =~ /GBP/;
 
-    use_ok("Math::Currency::GBP");
+    use_ok("Math::Currency::en_GB");
     foreach my $param qw(
       INT_CURR_SYMBOL CURRENCY_SYMBOL MON_DECIMAL_POINT
       MON_THOUSANDS_SEP MON_GROUPING POSITIVE_SIGN
@@ -41,7 +41,7 @@ SKIP: {
       N_SEP_BY_SPACE P_SIGN_POSN N_SIGN_POSN
       )    # hardcoded keys to be sure they are all there
       {
-	my $global_param = $LC_MONETARY->{'GBP'}->{$param};
+	my $global_param = $LC_MONETARY->{'en_GB'}->{$param};
         ok( $format->{$param} eq $global_param,
             sprintf( " \t'%s'\t= '%s'", $format->{$param}, $global_param ) );
       }

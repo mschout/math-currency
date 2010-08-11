@@ -98,29 +98,29 @@ sub run_tests {
     $dollars->format(''); # defined but false
     is ( $dollars, '$20.01', "default format restored" );
 
-    $yen = $CLASS->new( -2995.95, 'JPY');
-    is ( $yen, 'бя-2,996', "foreign currency with auto-rounding" );
-    $newyen = $yen->new(-2996);
-    ok ( $yen == $newyen, "two object equality (numeric)" );
-    ok ( $yen eq $newyen, "two object equality (string)" );
-
-    $pounds = $CLASS->new( 98994.95, 'GBP');
-    is ( $pounds, 'г98,994.95', "changes to object format" );
-
-    $newpounds = $pounds + 100000;
-
-    is ( ref($newpounds), ref($pounds), "autoupgrade to object" );
 
 # monetary_locale testing
     use POSIX qw( locale_h );
-    my $locale = setlocale(LC_ALL,"en_GB");
+    my $locale;
 
     SKIP: {
+	    $locale = setlocale(LC_ALL,"en_GB");
+	    skip ("No en_GB locale installed", 1)
+	    	unless setlocale(LC_ALL) eq "en_GB";
 	    skip ("No locale support", 3) unless $CLASS->localize();
 	    pass ( "Re-initialized locale with en_GB" );
 	    is ( $FORMAT->{INT_CURR_SYMBOL}, "GBP ", "POSIX format set properly");
+
+	    $pounds = $CLASS->new( 98994.95, 'GBP');
+	    is ( $pounds, 'г98,994.95', "changes to object format" );
+	    $newpounds = $pounds + 100000;
+
+	    is ( ref($newpounds), ref($pounds), "autoupgrade to object" );
+	}
+
+    SKIP: {
 	    $locale = setlocale(LC_ALL,"en_US");
-	    skip ("No en_US locale installed", 1) 
+	    skip ("No en_US locale installed", 1)
 	    	unless setlocale(LC_ALL) eq "en_US";
 	    $CLASS->always_init(1);
 	    is ( $dollars, '$20.01', "POSIX format reset properly");

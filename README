@@ -4,9 +4,9 @@ This module uses Math::BigFloat for all math operations.  It permits
 currency calculations without concern with floating point notation and
 rounding issues.
 
-This is a major release to maintain extended precision internally (an 
-extra 2 digits) so that repeated multiplication/division by non-M::C
-values will maintain appropriate accuracy.  See the POD for more details.
+This release includes a complete overhaul of the internationalization
+support for locales.  It may break existing code, depending on how you
+used the feature.  Please see the POD for details.
 
 To install, do the following (as non-root):
 
