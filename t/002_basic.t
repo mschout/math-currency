@@ -41,12 +41,12 @@ sub run_tests {
 
     ok ( defined $FORMAT, "format defaults configured" );
 
-    foreach $param qw( INT_CURR_SYMBOL CURRENCY_SYMBOL MON_DECIMAL_POINT
+    foreach $param (qw( INT_CURR_SYMBOL CURRENCY_SYMBOL MON_DECIMAL_POINT
 		       MON_THOUSANDS_SEP MON_GROUPING POSITIVE_SIGN
 		       NEGATIVE_SIGN INT_FRAC_DIGITS FRAC_DIGITS
 		       P_CS_PRECEDES P_SEP_BY_SPACE N_CS_PRECEDES
 		       N_SEP_BY_SPACE P_SIGN_POSN N_SIGN_POSN
-		     ) # hardcoded keys to be sure they are all there
+		     )) # hardcoded keys to be sure they are all there
     {
 	    ok ( defined $CLASS->format($param), sprintf(" \t%-20s = '%s'",$param,$CLASS->format($param)) );
     }
