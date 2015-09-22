@@ -39,7 +39,7 @@ use POSIX qw(locale_h);
   Money
 );
 
-$VERSION = 0.47;
+$VERSION = '0.47.1';
 
 $PACKAGE = __PACKAGE__;
 
